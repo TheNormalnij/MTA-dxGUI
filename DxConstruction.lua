@@ -165,6 +165,10 @@ dxConstruction = dxGUI.baseClass:subclass{
 		return false
 	end;
 
+	getObjectPlane = function( self, object )
+		return table.find( self.plane, object )
+	end;
+
 	getObjectInPosition = function( self, x, y )
 		if not x or not y then
 			error( 'Coordinate required', 2 )

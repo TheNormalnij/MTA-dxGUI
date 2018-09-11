@@ -49,10 +49,4 @@ dxGUI.baseClass:subclass{
 		self.scale = scaleX * self.scale
 	end;
 
-	setPostGUI = function( self, state )
-		if state == true or state == false then
-			self.postGUI = state
-		end
-	end;
-
 }
