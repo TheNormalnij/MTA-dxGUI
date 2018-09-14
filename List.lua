@@ -145,6 +145,7 @@ dxGUI.baseClass:subclass{
 				end
 			end
 			if self.renderTarget then
+				local prevRenderTarget = DxRenderTarget.getCurrentTarget()
 				self.renderTarget:setAsTarget( true )
 				dxSetBlendMode( 'modulate_add' )
 
@@ -160,7 +161,7 @@ dxGUI.baseClass:subclass{
 				end
 
 				dxSetBlendMode( 'add' )
-				dxSetRenderTarget( )
+				DxRenderTarget.setAsTarget( prevRenderTarget )
 				dxDrawImage( self.x, self.y, self.w, self.h, self.renderTarget, 0,
 					0, 0, 0xFFFFFFFF, self.postGUI )
 				dxSetBlendMode( 'blend' )
