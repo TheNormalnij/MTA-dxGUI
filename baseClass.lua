@@ -36,6 +36,19 @@ dxGUI = {
 			return self.x, self.y
 		end;
 
+		setSize = function( self, w, h )
+			if type( w ) == 'number' then
+				self.w = w
+			end
+			if type( h ) == 'number' then
+				self.h = h
+			end
+		end;
+
+		getSize = function( self )
+			return self.w, self.h
+		end;
+
 		setShow = function( self, show )
 			if type( show ) == 'boolean' then
 				self.show = show
