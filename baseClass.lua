@@ -151,7 +151,7 @@ dxGUI = {
 		removeAllAnims = function( self )
 			if self.anims then
 				for i = 1, #self.anims do
-					self.removeAnim( i, 'removed' )
+					self:removeAnim( i, 'removed' )
 				end
 				return true
 			end
