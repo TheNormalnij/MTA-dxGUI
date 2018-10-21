@@ -9,6 +9,7 @@ dxGUI.baseClass:subclass{
 	maxHorizontalItems = 1;
 	selectionType = 'single';
 	keyboardInput = false;
+	autofolding = true;
 
 	create = function( self )
 		if self.scrolling == 'vertical' then
@@ -62,7 +63,13 @@ dxGUI.baseClass:subclass{
 		end
 
 		pos = pos or #self.items + 1
-		table.insert( self.items, pos, newItem )
+		if self.autofolding then
+			table.insert( self.items, pos, newItem )
+		elseif not self.items[pos] then
+			self.items[pos] = newItem
+		else
+			return false
+		end
 		self:setItemStatus( pos, 'default' )
 
 		-- сделать скалинг по конструкции
@@ -74,7 +81,13 @@ dxGUI.baseClass:subclass{
 
 	removeItem = function( self, pos )
 		if self.items[pos] then
-			local value = table.remove( self.items, pos )
+			local value
+			if self.autofolding then
+				value = table.remove( self.items, pos )
+			else
+				value = self.items[pos]
+				self.items[pos] = nil
+			end
 			if not self.items[ self.active ] then
 				self:setActiveItem( self.active - 1 )
 			end
@@ -178,9 +191,9 @@ dxGUI.baseClass:subclass{
 	end;
 
 	cleanSelect = function( self )
-		for i = 1, #self.items do
-			if self.items[i].select then
-				self:setItemSelect( i, false )
+		for pos, item in pairs( self.items ) do
+			if item.select then
+				self:setItemSelect( pos, false )
 			end
 		end
 		return true
@@ -276,15 +289,23 @@ dxGUI.baseClass:subclass{
 		return self.active
 	end;
 
-	getItemInPosition = function( self, x, y )
+	getItemIndexFromPosition = function( self, x, y )
 		local cItemX = math.ceil( ( x - self.x + self.offsetX ) / self.construction.w )
 		local cItemY = math.ceil( ( y - self.y + self.offsetY ) / self.construction.h )
 		if cItemX < 1 or cItemY < 1 then
 			return false
 		end
-		local cItem = ( cItemY - 1 ) * self.maxHorizontalItems + cItemX
-		
-		return self.items[cItem] and cItem
+		return ( cItemY - 1 ) * self.maxHorizontalItems + cItemX
+
+	end;
+
+	getItemInPosition = function( self, x, y )
+		local cItem = self:getItemIndexFromPosition( x, y )
+		if self.items[cItem] then
+			return cItem, self.items[cItem]
+		else
+			return false
+		end
 	end;
 
 	onCursorMove = function( self, inBox, cX, cY, lastX, lastY, lastTree, tree, level )
