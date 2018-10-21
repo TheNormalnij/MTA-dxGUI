@@ -57,6 +57,7 @@ dxConstruction:subclass{
 			end
 		end;
 
+		self.defaultTextAlign = self.objects.text.alignX or 'left'
 		self:setText( tostring( self.text or '' ), false )
 		self.text = nil
 		return self
@@ -68,7 +69,7 @@ dxConstruction:subclass{
 			if textObject:getRealSize() >= textObject.w then
 				textObject.alignX = 'right'
 			else
-				textObject.alignX = textObject.alignX or 'left'
+				textObject.alignX = self.defaultTextAlign
 			end
 			self:setPlaceholderShow( text == '' and Input.get() ~= self.input )
 			if self.onChanged and ( callEvent == nil or callEvent ) then
