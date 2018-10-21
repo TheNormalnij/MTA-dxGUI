@@ -9,6 +9,8 @@ dxConstruction:subclass{
 
 		self.input = Input:create{ }
 		--self.input:bind( 'enter', true, self.onClick, self )
+
+		self:setEnabled( self.enabled )
 		return self
 	end;
 
@@ -28,7 +30,7 @@ dxConstruction:subclass{
 		return false
 	end;
 
-	setActive = function( self, enabled )
+	setEnabled = function( self, enabled )
 		if type( enabled ) == 'boolean' then
 			self.enabled = enabled
 			if enabled then
@@ -40,6 +42,10 @@ dxConstruction:subclass{
 		else
 			error( 'Bad argument #1, got ' .. type( enabled ), 2 )
 		end
+	end;
+
+	isEnabled = function( self )
+		return self.enabled
 	end;
 
 	_onClick = function( self, button, state )
