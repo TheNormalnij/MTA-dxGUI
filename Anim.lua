@@ -157,10 +157,10 @@ Anim{
 
 Anim{
 	name = 'softShow';
-	time = 500;
 
-	create = function( self, gui, time )
-		self.time = time
+	create = function( self, gui, timeIn, timeOut )
+		self.timeIn = timeIn
+		self.timeOut = timeOut or timeIn
 		self.originalSetShow = gui.setShow
 		self.originalIsShow = gui.isShow
 		self.state = 'default'
@@ -190,7 +190,7 @@ Anim{
 	update = function( self, gui )
 		local thisTick = getTickCount()
 		if self.state == 'out' then
-			local progress = ( thisTick - self.startTick ) / self.time
+			local progress = ( thisTick - self.startTick ) / self.timeOut
 			if progress > 1 then
 				self.originalSetShow( gui, false )
 				gui:setAlpha( 255 )
@@ -200,7 +200,7 @@ Anim{
 				gui:setAlpha( 255 * ( 1 - progress ) )
 			end
 		elseif self.state == 'in' then
-			local progress = ( thisTick - self.startTick ) / self.time
+			local progress = ( thisTick - self.startTick ) / self.timeIn
 			if progress > 1 then
 				gui:setAlpha( 255 )
 				self.state = 'default'
@@ -327,7 +327,8 @@ Anim{
 				textObject.w - dxGetTextWidth( utfSub( gui.objects.text.text, caret + 1, textSize ), textObject.scale, textObject.font )
 			)
 		else
-			return true
+			local textSize = dxGetTextWidth( gui.objects.text.text, textObject.scale, textObject.font )
+			offsetX = dxGetTextWidth( utfSub( gui.objects.text.text, 1, caret ), textObject.scale, textObject.font ) + (textObject.w - textSize) / 2
 		end
 
 		local tH = dxGetFontHeight( textObject.scale, textObject.font )
@@ -577,9 +578,9 @@ Anim{
 	name = 'mouseMoving';
 	key = 'mouse1';
 
-	create = function( self, gui, attachGUI, key )
+	create = function( self, gui, key, attachGUI )
 		self.key = key
-		self.attachGUI = attachGUI
+		self.attachGUI = attachGUI or gui
 
 		self.isMove = false
 
