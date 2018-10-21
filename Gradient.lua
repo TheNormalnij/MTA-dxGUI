@@ -42,6 +42,19 @@ dxGUI.baseClass:subclass{
 	-- 	)
 	-- end;
 
+	setGradientFunction = function( self, func )
+		if func then
+			self.gradientFunction = func
+			self.shader = nil
+		else
+			if not shader then
+				shader = dxCreateShader( "dxGUI/shaders/gradient.fx" )
+			end
+
+			self.shader = shader		
+		end
+	end;
+
 	draw = function( self )
 		if self.shader then
 			if self.isHorizontal then

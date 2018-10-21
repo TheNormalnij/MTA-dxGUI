@@ -12,9 +12,9 @@ float4 sGradientToColor = float4( 1, 1, 1, 1 );
 //  2. Process
 //  3. Return pixel color
 //------------------------------------------------------------------------------------------
-float4 PixelShaderFunction( float2 TexCoord : TEXCOORD0) : COLOR0
+float4 PixelShaderFunction( float4 Diffuse : COLOR0, float2 TexCoord : TEXCOORD0) : COLOR0
 {
-    return sGradientFromColor + ( sGradientToColor - sGradientFromColor ) * length( TexCoord * gradientVector );
+    return ( sGradientFromColor + ( sGradientToColor - sGradientFromColor ) * length( TexCoord * gradientVector ) ) * Diffuse;
 }
 
 //------------------------------------------------------------------------------------------
