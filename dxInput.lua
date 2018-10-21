@@ -4,7 +4,7 @@ local currentInput
 
 Input = class{
 	sticked	= false;
-	sticky	= 100; -- ms
+	sticky	= 70; -- ms
 
 	create = function( self )
 		self.controll = {}
