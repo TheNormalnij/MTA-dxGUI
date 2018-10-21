@@ -16,7 +16,15 @@ dxConstruction:subclass{
 			progress = math.min( 1, math.max( progress, 0 ) )
 			self.progress = progress
 			local slider = self.objects.slider
-			local bar = self.objects.bar
+			local bar = self.objects.bar or self
+
+			if self.resize and self.list then
+				if self.direction then
+					slider:setSize( slider.w, 1 / ( itemsCount - math.ceil( self.list.h / self.list.construction.h ) + 1 ) * bar.h )
+				else
+					slider:setSize( 1 / ( itemsCount - math.ceil( self.list.w / self.list.construction.w ) + 1 ) * bar.h, slider.h  )
+				end
+			end
 
 			if self.direction then
 				slider:setPosition( slider.x, bar.y + ( 1 - self.deadZone ) * bar.h * progress + bar.h * self.deadZone / 2 )
@@ -55,14 +63,17 @@ dxConstruction:subclass{
 	end;
 
 	attachList = function( self, list )
-		if list then
-			local anim = Anim.find( 'slider-list-sync' )
+		if self.list then
 			for id, anim in pairs( self.anims ) do
 				if anim.name == 'slider-list-sync' then
 					self:removeAnim( id )
 					break
 				end
 			end
+			self.list = list
+		end
+		if list then
+			local anim = Anim.find( 'slider-list-sync' )
 			self:addAnim( anim, list )
 		end
 	end;
