@@ -65,7 +65,10 @@ dxConstruction = dxGUI.baseClass:subclass{
 			local lastDataType = dataType
 			while true do
 				self.style[lastDataType].type = lastDataType
-				local parentClass = dxGUI[parent] or dxGUI[ self.style[parent].parent ]
+				local parentClass = dxGUI[parent]
+				if not parentClass and self.style[parent] and self.style[parent].parent then
+					parentClass = dxGUI[ self.style[parent].parent ]
+				end
 				if parentClass then
 					parentClass:subclass{ type = lastDataType }
 					table.uniteWithoutReplace( self.style[lastDataType], self.style[parent] )
@@ -76,7 +79,11 @@ dxConstruction = dxGUI.baseClass:subclass{
 						break;
 					end
 				else
-					self:errorHandler( '"' .. dataType .. '" request "' .. parent .. '" but it not found.'  )
+					if parent then
+						self:errorHandler( '"' .. dataType .. '" request "' .. parent .. '" but it not found.'  )
+					else
+						self:errorHandler( '"' .. dataType .. '" unknow object type'  )
+					end
 					break;
 				end
 			end
@@ -128,7 +135,7 @@ dxConstruction = dxGUI.baseClass:subclass{
 			end
 			return newObject
 		else
-			outputDebugString( 'dxGUI.baseClass: unsupportned object type ' .. tostring( data.type ) .. ' guiID ' .. tostring( guiID ) ..', skipping', 2 )
+			outputDebugString( 'dxGUI: unsupportned object type ' .. tostring( data.type ) .. ' guiID ' .. tostring( guiID ) ..', skipping', 2 )
 			return false
 		end
 	end;
@@ -373,6 +380,10 @@ dxConstruction = dxGUI.baseClass:subclass{
 
 	objectPairs = function( self )
 		return next, self.plane
+	end;
+
+	errorHandler = function( self, message )
+		iprint( 'dxGUI:', message )
 	end;
 }
 
