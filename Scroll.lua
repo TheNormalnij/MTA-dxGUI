@@ -17,8 +17,8 @@ dxConstruction:subclass{
 			local slider = self.objects.slider
 			local bar = self.objects.bar or self
 			local itemsCount = self.list and #self.list.items
-			if itemsCount and self.resize and itemsCount - math.ceil( self.list.h / self.list.construction.h ) >= 1 then
-				slider.h = 1 / ( itemsCount - math.ceil( self.list.h / self.list.construction.h ) + 1 ) * bar.h
+			if self.resize and itemsCount and itemsCount - math.ceil( self.list.h / self.list.construction.h ) >= 1 then
+				slider:setSize( slider.w, 1 / ( itemsCount - math.ceil( self.list.h / self.list.construction.h ) + 1 ) * bar.h )
 			else
 				--slider.h = bar.h
 			end
