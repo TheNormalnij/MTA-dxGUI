@@ -134,8 +134,13 @@ dxGUI = {
 		addAnim = function( self, anim, ... )
 			self.anims = self.anims or {}
 			local loadedAnim = anim( self, ... )
-			table.insert( self.anims, loadedAnim )
-			return loadedAnim
+			if loadedAnim then
+				table.insert( self.anims, loadedAnim )
+				return loadedAnim
+			else
+				self:errorHandler( 'Can not load anim "' .. tostring( anim.name ) .. '"' )
+				return false
+			end
 		end;
 
 		removeAnim = function( self, id, reason )
@@ -239,6 +244,10 @@ dxGUI = {
 					setmetatable( self, dxGUI.image )
 				end
 			)
+		end;
+
+		errorHandler = function( self, message )
+			iprint( 'dxGUI:', message )
 		end;
 
 	};

@@ -1,6 +1,7 @@
 dxConstruction:subclass{
 	type  = 'slider';
 	direction = false; -- false = horizontal; true = vertical
+	resize = false;
 	deadZone = 0;
 
 	create = function( self )

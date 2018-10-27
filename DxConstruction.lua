@@ -129,6 +129,7 @@ dxConstruction = dxGUI.baseClass:subclass{
 						newObject.anims[i] = nil
 						newObject:addAnim( anim, unpack( animData, 2 ) )
 					else
+						self:errorHandler( 'Can not find anim "' .. tostring( animData[1] ) .. '" in ' .. tostring( guiID ) )
 						--outputDebugString( 'Anim error in ' .. tostring( guiID ) .. ' with ' .. tostring( animData[1] ) )
 					end
 				end
@@ -382,9 +383,6 @@ dxConstruction = dxGUI.baseClass:subclass{
 		return next, self.plane
 	end;
 
-	errorHandler = function( self, message )
-		iprint( 'dxGUI:', message )
-	end;
 }
 
 
