@@ -507,4 +507,8 @@ dxGUI.baseClass:subclass{
 		self.keyboardInput = state
 		return true
 	end;
+
+	objectPairs = function( self )
+		return next, self.items
+	end;
 }
