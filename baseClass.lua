@@ -132,10 +132,10 @@ dxGUI = {
 		end;
 
 		addAnim = function( self, anim, ... )
-			self.anims = self.anims or {}
+			self.preAnims = self.preAnims or {}
 			local loadedAnim = anim( self, ... )
 			if loadedAnim then
-				table.insert( self.anims, loadedAnim )
+				table.insert( self.preAnims, loadedAnim )
 				return loadedAnim
 			else
 				self:errorHandler( 'Can not load anim "' .. tostring( anim.name ) .. '"' )
@@ -144,18 +144,18 @@ dxGUI = {
 		end;
 
 		removeAnim = function( self, id, reason )
-			local anim = self.anims[id]
+			local anim = self.preAnims[id]
 			if anim then
 				if anim.onStop then
 					anim:onStop( self, reason )
 				end
-				self.anims[id] = nil
+				self.preAnims[id] = nil
 			end
 		end;
 
 		removeAllAnims = function( self )
-			if self.anims then
-				for i = 1, #self.anims do
+			if self.preAnims then
+				for i = 1, #self.preAnims do
 					self:removeAnim( i, 'removed' )
 				end
 				return true
@@ -164,8 +164,8 @@ dxGUI = {
 		end;
 
 		updateAnims = function( self )
-			if not self.anims then return false; end
-			for i, anim in pairs( self.anims ) do
+			if not self.preAnims then return false; end
+			for i, anim in pairs( self.preAnims ) do
 				if not anim:update( self ) then
 					self:removeAnim( i, 'finished' )
 				end

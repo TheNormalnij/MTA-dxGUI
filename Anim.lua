@@ -36,7 +36,7 @@ Anim{
 	easing = 'Linear';
 
 	create = function( self, gui, time, toColor, easing, fromColor )
-		for id, anim in pairs( gui.anims ) do
+		for id, anim in pairs( preAnims .anims ) do
 			if anim.name == self.name then
 				gui:removeAnim( id )
 			end
@@ -88,7 +88,7 @@ Anim{
 	eastingY = 'Linear';
 
 	create = function( self, gui, time, x, y, eastingX, eastingY, fromX, fromY )
-		for id, anim in pairs( gui.anims ) do
+		for id, anim in pairs( gui.preAnims ) do
 			if anim.name == self.name then
 				gui:removeAnim( id )
 			end

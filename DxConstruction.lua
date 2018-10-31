@@ -54,6 +54,7 @@ dxConstruction = dxGUI.baseClass:subclass{
 				end
 			end
 		end
+		self.anims = nil
 
 		return self
 	end;
@@ -130,9 +131,9 @@ dxConstruction = dxGUI.baseClass:subclass{
 						newObject:addAnim( anim, unpack( animData, 2 ) )
 					else
 						self:errorHandler( 'Can not find anim "' .. tostring( animData[1] ) .. '" in ' .. tostring( guiID ) )
-						--outputDebugString( 'Anim error in ' .. tostring( guiID ) .. ' with ' .. tostring( animData[1] ) )
 					end
 				end
+				newObject.anims = nil
 			end
 			return newObject
 		else
