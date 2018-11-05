@@ -24,8 +24,8 @@ dxConstruction:subclass{
 	end;
 
 	setProgress = function( self, progress )
-		if type( progress ) == 'number' and progress >= 0 and progress <= 1 then
-			self.progress = progress
+		if type( progress ) == 'number' then
+			self.progress = math.clamp( 0, progress, 1 )
 
 			if self.progressSide == 1 then
 				
