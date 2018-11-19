@@ -3,10 +3,13 @@ dxGUI.tabs = dxConstruction:subclass{
 	active = 1;
 
 	create = function( self )
-		self.objects = {}
-		if self.head then
-			-- TODO
+
+		if self.body then
+			self.objects = table.copy( self.body, false )
+		else
+			self.objects = {}
 		end
+
 		dxConstruction.create( self, false )
 
 		for i = 1, #self.items do
@@ -54,8 +57,10 @@ dxGUI.tabs = dxConstruction:subclass{
 
 	objectPairs = function( self )
 		local t = {}
-		if self.head then
-
+		if self.body then
+			for guiID, data in pairs( self.body ) do
+				table.insert( t, data )
+			end			
 		end
 		for i = 1, #self.items do
 			for guiID, data in pairs( self.items[i] ) do
