@@ -45,6 +45,9 @@ Input = class{
 		local bind = self:getBind( key, press )
 		if bind then
 			bind[3]( unpack( bind, 4 ) )
+			if key == 'escape' and press then
+				cancelEvent()
+			end
 		end
 	end;
 
