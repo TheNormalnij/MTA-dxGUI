@@ -619,3 +619,23 @@ Anim{
 		-- body
 	end;
 }
+
+Anim{
+	name = 'attach';
+
+	create = function( self, gui, attachTo, offX, offY )
+		self.attachTo = attachTo
+		local gX, gY = gui:getPosition()
+		local tX, tY = attachTo:getPosition()
+		self.offX = offX or ( gX - tX )
+		self.offY = offY or ( gY - tY )
+		return self
+	end;
+
+	update = function( self, gui )
+		local x, y = self.attachTo:getPosition()
+		gui:setPosition( x + self.offX, y + self.offY )
+		return true
+	end;
+
+}
