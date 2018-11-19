@@ -28,7 +28,7 @@ dxGUI.tabs = dxConstruction:subclass{
 
 	setPosition = function( self, x, y )
 		x, y = math.floor( x ), math.floor( y )
-		for key, object in self:objectPairs() do
+		for key, object in next, self.objects do
 			object:setPosition( x + object.x - self.x, y + object.y - self.y )
 		end
 		self.x, self.y = x, y
