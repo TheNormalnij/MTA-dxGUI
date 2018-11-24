@@ -15,7 +15,11 @@ dxConstruction = dxGUI.baseClass:subclass{
 		end
 
 		if self.newRenderTarget then
-			self.renderTarget = dxCreateRenderTarget( self.newRenderTarget.w, self.newRenderTarget.h, self.newRenderTarget.withAlpha or false )
+			self.renderTarget = dxCreateRenderTarget( 
+				self.newRenderTarget.w or self.w,
+				self.newRenderTarget.h or self.h,
+				self.newRenderTarget.withAlpha or false
+			)
 		end
 		if not self.objects then
 			outputDebugString( 'Construction must have objects', 2 )
@@ -247,19 +251,21 @@ dxConstruction = dxGUI.baseClass:subclass{
 	end;
 
 	draw = function( self )
-		if self.renderTarget then
-			self.renderTarget:setAsTarget()
-		end
 		if self.show == true then
+			if self.renderTarget then
+				self.renderTarget:setAsTarget()
+			end
+
 			for _, object in ipairs( self.plane ) do
 				if object.show == true then
 					object:updateAnims()
 					object:draw()
 				end
 			end
-		end
-		if self.renderTarget then
-			dxSetRenderTarget()
+			
+			if self.renderTarget then
+				dxSetRenderTarget()
+			end
 		end
 	end;
 
