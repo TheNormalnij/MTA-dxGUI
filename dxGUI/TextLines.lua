@@ -110,7 +110,7 @@ dxGUI.baseClass:subclass{
 					if word2Size <= self.w then
 						if currnetLineSize == 0 then
 							if self.colorCoded and lastColor then
-								lines[currentLine] = word
+								lines[currentLine] = lastColor .. word
 							else
 								lines[currentLine] = word
 							end
@@ -118,26 +118,32 @@ dxGUI.baseClass:subclass{
 							lines[currentLine] = lines[currentLine] .. ' ' .. word 
 						end
 						currnetLineSize = word2Size + spaceSize
+						return
 					else
-						splitWord( word2 )
+						return splitWord( word2 )
 					end
 				end
 			end
+
 		end
 		for block in utf8.gmatch( text, '([%w%p ]+\n?)' ) do
 			for word in utf8.gmatch( block, '([%w%p]+)' ) do
+				local _, _, findColor = word:find( '(#%x%x%x%x%x%x)' )
+				lastColor = findColor and findColor or lastColor
+
 				local wordSize = dxGetTextWidth( word, self.scale, self.font, self.colorCoded )
 				if wordSize + currnetLineSize <= self.w then
-					lines[currentLine] = ( currnetLineSize == 0 and word ) or ( lines[currentLine] .. ' ' .. word )
+					--lines[currentLine] = ( currnetLineSize == 0 and word ) or ( lines[currentLine] .. ' ' .. word )
+					lines[currentLine] = ( currnetLineSize == 0 and lines[currentLine] .. word ) or ( lines[currentLine] .. ' ' .. word )
 
 					currnetLineSize = wordSize + currnetLineSize + spaceSize
 				elseif wordSize <= self.w then
 
 					currentLine = currentLine + 1
-					lines[currentLine] = self.colorCoded and lastColor or ''
+					--lines[currentLine] = self.colorCoded and 
 					currnetLineSize = 0
 
-					lines[currentLine] = ( currnetLineSize == 0 and word ) or ( lines[currentLine] .. ' ' .. word )
+					lines[currentLine] = ( currnetLineSize == 0 and ( lastColor or '' ) .. word ) or ( lines[currentLine] .. ' ' .. word )
 					currnetLineSize = wordSize + currnetLineSize + spaceSize
 				else
 					splitWord( word )
