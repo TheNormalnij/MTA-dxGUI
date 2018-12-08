@@ -71,7 +71,7 @@ Input = class{
 	deactivate = function( self )
 		currentInput = false
 		if self.onDeactivate then
-			self.onDeactivate()
+			self:onDeactivate()
 		end
 		guiSetInputMode( 'allow_binds' )
 	end;
