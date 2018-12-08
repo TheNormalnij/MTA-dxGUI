@@ -10,6 +10,10 @@ dxGUI.tabs = dxConstruction:subclass{
 			self.objects = {}
 		end
 
+		if not self.items then
+			self.items = {}
+		end
+
 		dxConstruction.create( self, false )
 
 		for i = 1, #self.items do
@@ -29,9 +33,20 @@ dxGUI.tabs = dxConstruction:subclass{
 		return self
 	end;
 
+	addItem = function( self, item, id )
+		id = id or #self.items + 1
+
+		for guiID, data in pairs( item ) do
+			self:initObject( data, guiID )
+		end
+
+		self.items[id] = item
+		return id
+	end;
+
 	setPosition = function( self, x, y )
 		x, y = math.floor( x ), math.floor( y )
-		for key, object in next, self.objects do
+		for key, object in pairs( self.objects ) do
 			object:setPosition( x + object.x - self.x, y + object.y - self.y )
 		end
 		self.x, self.y = x, y
