@@ -36,7 +36,7 @@ dxGUI.baseClass:subclass{
 	end;
 
 	getRealSize = function( self )
-		return dxGetTextWidth( self.text, self.scale, self.font ),
+		return dxGetTextWidth( self.text, self.scale, self.font, self.colorCoded ),
 			dxGetFontHeight( self.scale, self.font )
 	end;
 
