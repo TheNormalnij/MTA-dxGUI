@@ -88,8 +88,7 @@ Anim{
 
 	update = function( self, cursor )
 		local screenPlane = cursor.screen.plane
-		local obejctsCount = #screenPlane
-		if screenPlane[obejctsCount] ~= cursor then
+		if screenPlane[ #screenPlane ] ~= cursor then
 			table.removeValue( screenPlane, cursor )
 			table.insert( screenPlane, cursor )
 		end
