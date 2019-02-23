@@ -17,6 +17,7 @@ dxConstruction:subclass{
 		self.input:bind( 'backspace', true, self.remove, self, 1 )
 		self.input:bind( 'arrow_l', true, self.moveCarete, self, -1 )
 		self.input:bind( 'arrow_r', true, self.moveCarete, self, 1 )
+		self.input:bind( 'enter', true, self.input.deactivate, self.input )
 
 		self.input.onCharacter = function( input, character )
 			self:add( character )
