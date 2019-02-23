@@ -28,15 +28,54 @@ dxGUI.baseClass:subclass{
 
 	draw = function( self )
 		local lineSpace = self.fontSize * self.lineSpacing
+
+		local offY = self.offsetY % lineSpace
+		local itemOffsetY = self.offsetY / self.fontSize
+
+		local drawFunction, postGUI
+
 		if self.invert then
-			for i = 1, math.min( #self.lines - self.offsetY, math.ceil( self.h / lineSpace ) ) do
-				dxDrawText( self.lines[i + self.offsetY], self.x, self.y + self.h - lineSpace * i, self.x + self.w, self.y + self.h - lineSpace * (i - 1), self.color, self.scale, self.font, self.alignX, self.alignY,
-					self.clip, self.wordBreak, self.postGUI, self.colorCoded, self.subPixelPositioning )
+			drawFunction = function( x, y )
+				for i = 1, math.min( #self.lines - math.floor( self.offsetY / lineSpace ), math.ceil( (self.h + offY) / lineSpace ) ) do
+					dxDrawText( self.lines[math.floor(i + self.offsetY/lineSpace)], x, y + self.h - lineSpace * i, x + self.w, y + self.h - lineSpace * (i - 1), self.color, self.scale, self.font, self.alignX, self.alignY,
+						self.clip, self.wordBreak, postGUI, self.colorCoded, self.subPixelPositioning )
+				end
 			end
 		else
-			for i = 1, math.min( #self.lines - self.offsetY, math.ceil( self.h / lineSpace ) ) do
-				dxDrawText( self.lines[i + self.offsetY], self.x, self.y + lineSpace * (i - 1), self.x + self.w, self.y + lineSpace * i, self.color, self.scale, self.font, self.alignX, self.alignY,
-					self.clip, self.wordBreak, self.postGUI, self.colorCoded, self.subPixelPositioning )
+			drawFunction = function( x, y )
+				for i = 1, math.min( #self.lines - math.floor( self.offsetY / lineSpace ), math.ceil( (self.h + offY) / lineSpace ) ) do
+					dxDrawText( self.lines[math.floor(i + self.offsetY/lineSpace)], x, y + lineSpace * (i - 1), x + self.w, y + lineSpace * i, self.color, self.scale, self.font, self.alignX, self.alignY,
+						self.clip, self.wordBreak, postGUI, self.colorCoded, self.subPixelPositioning )
+				end
+			end
+		end
+
+
+		if offY == 0 and self.h % lineSpace == 0 then
+			if self.renderTarget then
+				self.renderTarget:destroy()
+				self.renderTarget = nil
+				postGUI = self.postGUI
+			end
+			drawFunction( self.x, self.y )
+		else
+			if not self.renderTarget then
+				self.renderTarget = DxRenderTarget( self.w, self.h, true )
+				postGUI = false
+			end
+			if self.renderTarget then
+				local prevRenderTarget = DxRenderTarget.getCurrentTarget()
+				self.renderTarget:setAsTarget( true )
+				dxSetBlendMode( 'modulate_add' )
+				drawFunction( 0, offY )
+
+				dxSetBlendMode( 'add' )
+				DxRenderTarget.setAsTarget( prevRenderTarget )
+				dxDrawImage( self.x, self.y, self.w, self.h, self.renderTarget, 0,
+					0, 0, 0xFFFFFFFF, self.postGUI )
+				dxSetBlendMode( 'blend' )
+			else
+				dxDrawText( 'NO VIDEO MEMORY FOR CREATE RENDERTARGET', self.x, self.y, self.x + self.w, self.y + self.h, 5 )
 			end
 		end
 	end;
@@ -157,8 +196,7 @@ dxGUI.baseClass:subclass{
 	end;
 
 	move = function( self, countY )
-		local linesCount = #self.lines
-		local maxOffsetY = -(math.ceil( self.h / (self.fontSize * self.lineSpacing) ) - linesCount) - 1
+		local maxOffsetY = (#self.lines - 1) * self.fontSize * self.lineSpacing - self.h
 
 		if countY and countY ~= 0 and maxOffsetY > 0 then
 			if self.offsetY + countY > maxOffsetY then
@@ -189,9 +227,4 @@ dxGUI.baseClass:subclass{
 		self.scale = scaleX * self.scale
 	end;
 
-	setPostGUI = function( self, state )
-		if state == true or state == false then
-			self.postGUI = state
-		end
-	end;
 }

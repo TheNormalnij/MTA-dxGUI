@@ -350,7 +350,7 @@ Anim{
 
 	create = function( self, gui, time, easing )
 		self.time = time
-		self.movedOriginal = gui.moved
+		self.moveOriginal = gui.move
 		self.originalUpdateAnims = gui.updateAnims
 		self.state = 'default'
 
@@ -451,7 +451,89 @@ Anim{
 	end;
 
 	onStop = function ( self, gui )
-		gui.moved = self.movedOriginal
+		gui.move = self.moveOriginal
+	end;
+}
+
+-- TextLines
+Anim{
+	name = 'softTextLinesMoved';
+
+	create = function( self, gui, time, easing )
+		self.time = time
+		self.moveOriginal = gui.move
+		self.originalUpdateAnims = gui.updateAnims
+		self.state = 'default'
+
+		gui.move = function( gui, countY )
+			local maxOffsetY = (#gui.lines - 1) * gui.fontSize * gui.lineSpacing - gui.h
+			
+			if self.state == 'default' then
+
+				self.from = gui.offsetY
+
+				local toY
+				if countY and countY ~= 0 and maxOffsetY > 0 then
+					if gui.offsetY + countY > maxOffsetY then
+						toY = maxOffsetY
+					elseif gui.offsetY + countY < 0 then
+						toY = 0
+					else
+						toY = gui.offsetY + countY
+					end
+				else
+					toY = gui.offsetY
+				end
+
+				if toY ~= gui.offsetY then
+					self.to = toY
+					self.state = 'move'
+					self.startTick = getTickCount( )
+				end
+			else
+
+				local toY
+				if countY and countY ~= 0 and maxOffsetY > 0 then
+					if self.to + countY > maxOffsetY then
+						toY = maxOffsetY
+					elseif self.to + countY < 0 then
+						toY = 0
+					else
+						toY = self.to + countY
+					end
+				else
+					toY = self.to
+				end
+
+				if toY ~= self.to then
+					self.to = toY
+					self.state = 'move'
+					--self.startTick = getTickCount( )
+				end
+			end
+		end;
+
+		return self
+	end;
+
+	update = function( self, gui )
+		local thisTick = getTickCount()
+		if self.state == 'move' then
+			local progress = ( thisTick - self.startTick ) / self.time
+			if progress > 1 then
+				gui.offsetY = self.to
+				self.to = nil
+				self.from = nil
+				self.state = 'default'
+				return true
+			end
+			gui.offsetY = self.from + ( self.to - self.from ) * progress
+		end
+		return true
+	end;
+
+	onStop = function ( self, gui )
+		gui.move = self.moveOriginal
 	end;
 }
 
