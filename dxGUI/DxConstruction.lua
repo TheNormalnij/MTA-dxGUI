@@ -14,6 +14,15 @@ dxConstruction = dxGUI.baseClass:subclass{
 			self.screen = dxConstruction.screen
 		end
 
+		if self.screen then
+			if not self.w then
+				self.w = self.screen.w
+			end
+			if not self.h then
+				self.h = self.screen.h
+			end
+		end
+
 		if self.newRenderTarget then
 			self.renderTarget = dxCreateRenderTarget( 
 				self.newRenderTarget.w or self.w,
