@@ -335,9 +335,9 @@ dxGUI.baseClass:subclass{
 			item:onCursorMove( inBox, cX, cY, lastX, lastY, lastTree, tree, level )
 		end
 
-		--if getKeyState( 'mouse1' ) then
+		if getKeyState( 'mouse1' ) then
 			self:setActiveItem( cItem )
-		--end
+		end
 
 		self.prevCurorMovedItem = cItem
 	end;
