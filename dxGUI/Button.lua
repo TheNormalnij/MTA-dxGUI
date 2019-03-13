@@ -21,6 +21,13 @@ dxConstruction:subclass{
 		return false
 	end;
 
+	getText = function( self, text )
+		if self.objects.text then
+			return self.objects.text:getText( text )
+		end
+		return ''
+	end;
+
 	setShow = function( self, show )
 		if type( show ) == 'boolean' then
 			self:setStatus( 'default' )
