@@ -120,6 +120,17 @@ dxGUI.baseClass:subclass{
 		return false		
 	end;
 
+	addLine = function( self, text, pos )
+		if type( text ) == 'number' then
+			text = tostring( text )
+		end;
+		if type( text ) == 'string' then
+			table.insert( self.lines, pos or (#self.lines + 1), text )
+			return true
+		end
+		return false
+	end;
+
 	splitText = function( self, text )
 		local spaceSize = dxGetTextWidth( ' ', self.scale, self.font, self.colorCoded )
 
