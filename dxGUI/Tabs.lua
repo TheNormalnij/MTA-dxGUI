@@ -16,9 +16,8 @@ dxGUI.tabs = dxConstruction:subclass{
 
 		dxConstruction.create( self, false )
 
-		for i = 1, #self.items do
-			local thistabItems = self.items[i]
-			if self.active == i then
+		for id, thistabItems in pairs( self.items ) do
+			if self.active == id then
 				for guiID, data in pairs( thistabItems ) do
 					self:initObject( data, guiID )
 					self:addObject( data, guiID )
@@ -53,15 +52,19 @@ dxGUI.tabs = dxConstruction:subclass{
 	end;
 
 	setActiveTab = function( self, id )
-		if self.items[id] then
+		if self.items[ self.active ] then
 			for guiID, data in pairs( self.items[ self.active ] ) do
 				self:removeObject( guiID )
 			end
+		end
+		if id and self.items[id] then
 			for guiID, data in pairs( self.items[id] ) do
 				self:addObject( data, guiID )
 			end
 			self.active = id
 			return true
+		else
+			self.active = nil
 		end
 		return false
 	end;
