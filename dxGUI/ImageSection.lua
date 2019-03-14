@@ -11,7 +11,7 @@ dxGUI.baseClass:subclass{
 
 	create = function( self )
 		self.us = self.us or self.w
-		self.uv = self.vs or self.h
+		self.vs = self.vs or self.h
 		return self
 	end;
 
