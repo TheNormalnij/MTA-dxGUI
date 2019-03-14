@@ -256,6 +256,13 @@ dxGUI.baseClass:subclass{
 		return false
 	end;
 
+	getItemStatus = function( self, index )
+		if self.items[index] then
+			return self.items[index].status
+		end
+		return false
+	end;
+
 	setActiveItem = function( self, index )
 		if not self.items[index] then return false; end
 		self:setItemStatus( index, 'active' )
