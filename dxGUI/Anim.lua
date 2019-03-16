@@ -167,17 +167,25 @@ Anim{
 		self.show = gui.show
 		
 		gui.setShow = function( gui, state )
-			self.startTick = getTickCount()
+			local startTick = getTickCount()
 			if self.show ~= state then
 				if state then
-					gui:setAlpha( 0 )
+					if self.state == 'out' then
+						startTick = startTick - self.timeIn * ( 1 - gui:getAlpha() / 255 )
+					else
+						gui:setAlpha( 0 )
+					end
 					self.originalSetShow( gui, true )
 					self.state = 'in'
 				else
+					if self.state == 'in' then
+						startTick = startTick - self.timeOut * ( 1 - gui:getAlpha() / 255 )
+					end
 					self.state = 'out'
 				end
 				self.show = state
 			end
+			self.startTick = startTick
 		end;
 
 		gui.isShow = function( gui )
