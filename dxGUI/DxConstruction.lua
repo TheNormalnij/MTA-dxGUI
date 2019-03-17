@@ -165,10 +165,16 @@ dxConstruction = dxGUI.baseClass:subclass{
 		if id then
 			self.objects[id] = data
 		end
-		--data.x, data.y = data.x + self.x, data.y + self.y
 		self:setObjectPosition( data, data.x, data.y )
-		table.insert( self.plane, data.p or ( #self.plane + 1 ), data )
-		--data.p = nil
+		
+		if not data.p then
+			table.insert( self.plane, data )
+		elseif self.plane[ data.p ] then
+			table.insert( self.plane, data.p or ( #self.plane + 1 ), data )
+		else
+			self.plane[ data.p ] = data
+		end
+
 	end;
 
 	removeObject = function( self, id )
