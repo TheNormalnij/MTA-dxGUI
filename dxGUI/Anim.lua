@@ -312,8 +312,12 @@ Anim{
 	name = 'Carete';
 
 	create = function( self, gui, time, r, g, b )
-		self.time = time
-		self.vColor = { r, g, b }
+		self.time = time or 500
+		if r and g and b then
+			self.vColor = { r, g, b }
+		else
+			self.vColor = { color.HEXtoRGB( gui.objects.text:getColor() ) }
+		end
 
 		local caret = gui:initObject{ type = 'rectangle', x = 0, y = 0, w = 2 }
 		gui:addObject( caret, 'caret' )
