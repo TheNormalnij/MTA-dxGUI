@@ -3,7 +3,7 @@ local currentRT
 
 local drawingOffsetsEnabled = false
 
-local dxSetRenderTarget = dxSetRenderTarget
+local _dxSetRenderTarget = dxSetRenderTarget
 
 local _dxDrawImage = dxDrawImage
 local _dxDrawText = dxDrawText
@@ -25,7 +25,7 @@ local function setDrawingOffset( offX, offY )
 end
 
 function DxRenderTarget:setAsTarget( clean, offX, offY )
-	dxSetRenderTarget( self, clean )
+	_dxSetRenderTarget( self, clean )
 	currentRT = self
 	setDrawingOffset( offX, offY )
 end
@@ -36,4 +36,10 @@ end
 
 function DxRenderTarget.getCurrentTarget( )
 	return currentRT
+end
+
+function dxSetRenderTarget( target, clean )
+	_dxSetRenderTarget( target, clean  )
+	currentRT = target
+	setDrawingOffset( )
 end
