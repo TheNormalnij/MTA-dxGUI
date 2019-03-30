@@ -9,7 +9,9 @@ dxConstruction:subclass{
 		--if not self.objects.text then
 		--	return false
 		--end
-		dxConstruction.create( self, false )
+		if not dxConstruction.create( self, false ) then
+			return false
+		end
 
 		--self.construction.objects.text.input = Input{
 		self.input = Input()

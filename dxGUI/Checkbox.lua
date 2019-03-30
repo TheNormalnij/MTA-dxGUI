@@ -5,7 +5,9 @@ dxConstruction:subclass{
 	active = true;
 
 	create = function( self )
-		dxConstruction.create( self, false )
+		if not dxConstruction.create( self, false ) then
+			return false
+		end
 		
 		self:setText( self.text )
 

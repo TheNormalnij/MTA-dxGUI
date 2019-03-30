@@ -5,7 +5,9 @@ dxConstruction:subclass{
 	deadZone = 0;
 
 	create = function( self )
-		dxConstruction.create( self, false )
+		if not dxConstruction.create( self, false ) then
+			return false
+		end
 
 		self:setProgress( self.progress or 0.5 )
 		self.input = Input:create{ }		

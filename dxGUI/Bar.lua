@@ -5,7 +5,9 @@ dxConstruction:subclass{
 	isEnabled = true;
 
 	create = function( self )
-		dxConstruction.create( self, false )
+		if not dxConstruction.create( self, false ) then
+			return false
+		end
 
 		local bar = self.objects.bar
 
