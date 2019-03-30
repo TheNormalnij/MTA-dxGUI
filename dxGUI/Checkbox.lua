@@ -11,7 +11,9 @@ dxConstruction:subclass{
 		
 		self:setText( self.text )
 
-		self:setActive( self.active == true )
+		self:setActive( self.active )
+
+		self:setSelected( self.selected )
 		return self
 	end;
 
