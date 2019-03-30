@@ -733,3 +733,17 @@ Anim{
 	end;
 
 }
+
+Anim{
+	name = 'updateScreenSource';
+
+	create = function( self )
+		return self
+	end;
+
+	update = function( self, gui )
+		gui.image:update()
+		return true
+	end;
+
+}
