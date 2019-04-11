@@ -16,6 +16,7 @@ dxGUI.baseClass:subclass{
 
 	drawScreen = true;
 	reguestScreen = true;
+	autoUpdate = true;
 
 	create = function( self )
 
@@ -23,6 +24,10 @@ dxGUI.baseClass:subclass{
 			or not self:loadScreenSource()
 		then
 			return false
+		end
+
+		if self.autoUpdate then
+			self:addAnim( Anim.find( 'blur-autoupdate' ) )
 		end
 
 		return self
@@ -76,6 +81,16 @@ dxGUI.baseClass:subclass{
 
 	draw = function( self )
 		local screenSourceData = screenSources[self.screenSource] or self:loadScreenSource()
+
+		if screenSourceData then
+			screenSourceData[4] = true
+			dxDrawImage( self.x, self.y, self.w, self.h, screenSourceData[5], self.rotation,
+				self.rotationCenterOffsetX,	self.rotationCenterOffsetY, self.color, self.postGUI )
+		end
+	end;
+
+	updateBlur = function( self )
+		local screenSourceData = screenSources[self.screenSource] or self:loadScreenSource()
 		
 		if not screenSourceData then
 			return false
@@ -84,10 +99,9 @@ dxGUI.baseClass:subclass{
 		if not screenSourceData[4] then
 			screenSourceData[4] = true
 			dxUpdateScreenSource( self.screenSource, false )
-		end
+		end	
 
 		local blurRenderTarget = screenSourceData[5]
-
 
 		blurRenderTarget:setAsTarget( true )
 
@@ -111,12 +125,20 @@ dxGUI.baseClass:subclass{
 		end
 
 		DxRenderTarget.setAsTarget()
-	
+	end;
+}
 
-		dxDrawImage( self.x, self.y, self.w, self.h, blurRenderTarget, self.rotation,
-			self.rotationCenterOffsetX,	self.rotationCenterOffsetY, self.color, self.postGUI )
+Anim{
+	name = 'blur-autoupdate';
+
+	create = function( self )
+		return self
 	end;
 
+	update = function( self, blur )
+		blur:updateBlur()
+		return true
+	end;
 }
 
 addEventHandler( 'onClientRender', root, function()
