@@ -18,6 +18,8 @@ dxGUI.baseClass:subclass{
 	topY = -3000;
 	bottopY = 3000;
 
+	mapIsCircle = false;
+
 	drawBlips = false;
 	drawOutBlips = true;
 	checkBlipDistance = false;
@@ -30,12 +32,14 @@ dxGUI.baseClass:subclass{
 
 	drawNorth = false;
 
+	bolderColor = 0xFFFFFFFF;
+
 	create = function( self )
 
 		self.radarW = self.radarW or self.w
 		self.radarH = self.radarH or self.h
 
-		self.map = DxTexture( self.mapPath )
+		self.map = self.map or DxTexture( self.mapPath )
 
 		if not self.map then
 			self:errorHandler( 'Failed to load map' )
@@ -77,7 +81,7 @@ dxGUI.baseClass:subclass{
 			if not self.playerIcon and self.drawLocalPlayer then
 				self.playerIcon = self.blips[2]
 			end
-		else
+		elseif not self.blips then
 			self.drawBlips = false
 		end
 
@@ -91,13 +95,20 @@ dxGUI.baseClass:subclass{
 		self:setDrawType( self.useRenderTarget )
 
 		--dxSetShaderValue( self.shader, "sPicTexture", self.map )
-		dxSetShaderValue( self.shader, "sMaskTexture", self.mapMask );
+		if self.mapMask then
+			dxSetShaderValue( self.shader, "sMaskTexture", self.mapMask );
+		end
+
+		if self.mapIsCircle then
+			self.mapRadius = self.mapRadius or self.w / 2
+		end
 
 		dxSetShaderValue( self.shader, "gUVPosition", 0, 0 )
 		dxSetShaderValue( self.shader, "gUVRotAngle", 0 )
 		dxSetShaderValue( self.shader, "gUVRotCenter", 0.5, 0.5 )
 		dxSetShaderValue( self.shader, "gUVScale", 1, 1 )
 		dxSetShaderValue( self.shader, "gUVScaleCenter", 0.5, 0.5 )
+		dxSetShaderValue( self.shader, "bolderColor", self.bolderColor )
 
 		return self
 	end;
@@ -187,36 +198,77 @@ dxGUI.baseClass:subclass{
 			local mapOffsetX = ( self.w - self.radarW ) / 2
 			local mapOffsetY = ( self.h - self.radarH ) / 2
 
-			for _, blip in pairs( getElementsByType( 'blip' ) ) do
+			if self.mapIsCircle then
+				local radius = self.mapRadius
 
-				local blipX, blipY, blipZ = getElementPosition( blip )
-				local distance = ( ( lpPos.x - blipX )^2 + ( lpPos.y - blipY )^2 ) ^ 0.5
-				local blipRot = math.atan2( blipX - pX, blipY - pY ) + camRootRad
-				local attached = getElementAttachedTo( blip )
-				if distance <= blip:getVisibleDistance() and attached ~= localPlayer then
+				for _, blip in pairs( getElementsByType( 'blip' ) ) do
 
-					local pixelDistance = distance / self.bottopY * self.zoom * self.w / 2
-					local iconID = blip:getIcon()
+					local blipX, blipY, blipZ = getElementPosition( blip )
+					local distance = ( ( lpPos.x - blipX )^2 + ( lpPos.y - blipY )^2 ) ^ 0.5
+					local blipRot = math.atan2( blipX - pX, blipY - pY ) + camRootRad
+					local attached = getElementAttachedTo( blip )
+					if distance <= blip:getVisibleDistance() and attached ~= localPlayer then
 
-					local bcR, bcG, bcB, bcA = getBlipColor( blip )
-					if iconID ~= 0 then
-						bcR, bcG, bcB = 255, 255, 255
+						local pixelDistance = distance / self.bottopY * self.zoom * self.w / 2
+						local iconID = blip:getIcon()
+
+						local bcR, bcG, bcB, bcA = getBlipColor( blip )
+						if iconID ~= 0 then
+							bcR, bcG, bcB = 255, 255, 255
+						end
+						local bS = 32 * blip:getSize() / 4
+						local halfBS = bS / 2
+
+						if pixelDistance < radius then
+							dxDrawImage( 
+								drawCenterX + pixelDistance * math.cos( blipRot - math.pi/2 ) - halfBS,
+								drawCenterY + pixelDistance * math.sin( blipRot - math.pi/2 ) - halfBS,
+								bS, bS, self.blips[iconID], 0, 0, 0, tocolor(bcR, bcG, bcB, bcA)
+							)
+						elseif self.drawOutBlips then
+							dxDrawImage( 
+								drawCenterX + radius * math.cos( blipRot - math.pi/2 ) - halfBS,
+								drawCenterY + radius * math.sin( blipRot - math.pi/2 ) - halfBS,
+								bS, bS, self.blips[iconID], 0, 0, 0, tocolor(bcR, bcG, bcB, bcA)
+							)							
+						end
+
 					end
-					local bS = 32 * blip:getSize() / 4
-					local halfBS = bS / 2
-
-					
-					local drawBlipX = drawCenterX + pixelDistance * math.cos( blipRot - math.pi/2 ) - halfBS
-					local drawBlipY = drawCenterY + pixelDistance * math.sin( blipRot - math.pi/2 ) - halfBS
-
-					local clampX = math.clamp( self.x - halfBS + mapOffsetX, drawBlipX, self.x + self.w - halfBS - mapOffsetX )
-					local clampY = math.clamp( self.y - halfBS + mapOffsetY, drawBlipY, self.y + self.h - halfBS - mapOffsetY )
-
-					if self.drawOutBlips or ( clampX == drawBlipX and clampY == drawBlipY ) then
-						dxDrawImage( clampX, clampY, bS, bS, self.blips[iconID], 0, 0, 0, tocolor(bcR, bcG, bcB, bcA) )
-					end
-
 				end
+			else
+
+				for _, blip in pairs( getElementsByType( 'blip' ) ) do
+
+					local blipX, blipY, blipZ = getElementPosition( blip )
+					local distance = ( ( lpPos.x - blipX )^2 + ( lpPos.y - blipY )^2 ) ^ 0.5
+					local blipRot = math.atan2( blipX - pX, blipY - pY ) + camRootRad
+					local attached = getElementAttachedTo( blip )
+					if distance <= blip:getVisibleDistance() and attached ~= localPlayer then
+
+						local pixelDistance = distance / self.bottopY * self.zoom * self.w / 2
+						local iconID = blip:getIcon()
+
+						local bcR, bcG, bcB, bcA = getBlipColor( blip )
+						if iconID ~= 0 then
+							bcR, bcG, bcB = 255, 255, 255
+						end
+						local bS = 32 * blip:getSize() / 4
+						local halfBS = bS / 2
+
+						
+						local drawBlipX = drawCenterX + pixelDistance * math.cos( blipRot - math.pi/2 ) - halfBS
+						local drawBlipY = drawCenterY + pixelDistance * math.sin( blipRot - math.pi/2 ) - halfBS
+
+						local clampX = math.clamp( self.x - halfBS + mapOffsetX, drawBlipX, self.x + self.w - halfBS - mapOffsetX )
+						local clampY = math.clamp( self.y - halfBS + mapOffsetY, drawBlipY, self.y + self.h - halfBS - mapOffsetY )
+
+						if self.drawOutBlips or ( clampX == drawBlipX and clampY == drawBlipY ) then
+							dxDrawImage( clampX, clampY, bS, bS, self.blips[iconID], 0, 0, 0, tocolor(bcR, bcG, bcB, bcA) )
+						end
+
+					end
+				end
+
 			end
 
 		end
@@ -300,6 +352,11 @@ dxGUI.baseClass:subclass{
 				if blipObject.onCreate then
 					blipObject:onCreate( )
 				end
+
+				self:addEventHandler( 'onClientElementDestroy', blip, function()
+					self.blipObjects[blip] = nil
+				end )
+
 			end
 			blipObject:setBlipDrawPosition( x, y )
 
@@ -331,11 +388,26 @@ dxGUI.baseClass:subclass{
 			self.y + self.h / 2 - self.h * self.UVPosition[2] * self.zoom * self.w/self.h
 	end;
 
+	getOffScreenSize = function( self )
+		local offscreenSizeX, offscreenSizeY
+		if self.offscreenSizeX then
+			offscreenSizeX = self.offscreenSizeX
+		else
+			offscreenSizeX = ( 1 - 1/self.zoom ) / 2
+		end
+		if self.offscreenSizeY then
+			offscreenSizeY = self.offscreenSizeX
+		else
+			offscreenSizeY = ( 1 - 1/self.zoom * self.h/self.w ) / 2
+		end
+
+		return offscreenSizeX, offscreenSizeY
+	end;
+
 	setZoom = function( self, zoom )
 		self.zoom = math.clamp( self.minZoom, zoom, self.maxZoom )
 		if self.restrictMovement then
-			local offscreenSizeX = ( 1 - 1/self.zoom ) / 2
-			local offscreenSizeY = ( 1 - 1/self.zoom * self.h/self.w ) / 2
+			local offscreenSizeX, offscreenSizeY = self:getOffScreenSize()
 			self.UVPosition[1] = math.clamp( -offscreenSizeX, self.UVPosition[1], offscreenSizeX )
 			self.UVPosition[2] = math.clamp( -offscreenSizeY, self.UVPosition[2], offscreenSizeY )
 		end
@@ -347,8 +419,7 @@ dxGUI.baseClass:subclass{
 
 	move = function( self, moveX, moveY )
 		if self.restrictMovement then
-			local offscreenSizeX = ( 1 - 1/self.zoom ) / 2
-			local offscreenSizeY = ( 1 - 1/self.zoom * self.h/self.w ) / 2
+			local offscreenSizeX, offscreenSizeY = self:getOffScreenSize()
 			self.UVPosition[1] = math.clamp( -offscreenSizeX, self.UVPosition[1] + moveX, offscreenSizeX )
 			self.UVPosition[2] = math.clamp( -offscreenSizeY, self.UVPosition[2] + moveY, offscreenSizeY )
 		else
@@ -381,7 +452,7 @@ Anim{
 	update = function( self, gui )
 		local vehicle = localPlayer:getOccupiedVehicle()
 		local velocity = vehicle and vehicle:getVelocity() or localPlayer:getVelocity()
-		gui.zoom = math.min( 2/velocity:getLength(), 5 )
+		gui.zoom = math.min( gui.minZoom/velocity:getLength(), gui.maxZoom )
 		return true
 	end;
 }
