@@ -134,8 +134,8 @@ dxGUI.baseClass:subclass{
 	splitText = function( self, text )
 		local spaceSize = dxGetTextWidth( ' ', self.scale, self.font, self.colorCoded )
 
-		local lines = { [1] = '' }
-		local currentLine = 1
+		local lines = { }
+		local currentLine = 0
 		local currnetLineSize = 0
 		local lastColor
 
@@ -177,6 +177,9 @@ dxGUI.baseClass:subclass{
 
 		end
 		for block in utf8.gmatch( text, '([%w%p ]+\n?)' ) do
+			currentLine = currentLine + 1
+			lines[currentLine] = ''
+			currnetLineSize = 0
 			for word in utf8.gmatch( block, '([%w%p]+)' ) do
 				local _, _, findColor = word:find( '(#%x%x%x%x%x%x)' )
 				lastColor = findColor and findColor or lastColor
@@ -200,9 +203,6 @@ dxGUI.baseClass:subclass{
 				end
 			end
 		end
-		-- currentLine = currentLine + 1
-		-- lines[currentLine] = ''
-		-- currnetLineSize = 0
 		return lines
 	end;
 
