@@ -9,7 +9,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 texture sPicTexture;
 texture sMaskTexture;
-int bolderColor = 0x00FFFFFF;
+int borderColor = 0x00FFFFFF;
 
 float2 gUVPrePosition = float2( 0, 0 );
 float2 gUVScale = float( 1 );                     // UV scale
@@ -45,7 +45,7 @@ technique hello
         TextureTransformFlags[0] = Count2;
         AddressU[0] = border;
         AddressV[0] = border;
-        borderColor[0] = bolderColor;
+        borderColor[0] = borderColor;
         // Color mix texture and diffuse
         ColorOp[0] = Modulate;
         ColorArg1[0] = Texture;

@@ -32,7 +32,7 @@ dxGUI.baseClass:subclass{
 
 	drawNorth = false;
 
-	bolderColor = 0xFFFFFFFF;
+	borderColor = 0xFFFFFFFF;
 
 	create = function( self )
 
@@ -108,7 +108,7 @@ dxGUI.baseClass:subclass{
 		dxSetShaderValue( self.shader, "gUVRotCenter", 0.5, 0.5 )
 		dxSetShaderValue( self.shader, "gUVScale", 1, 1 )
 		dxSetShaderValue( self.shader, "gUVScaleCenter", 0.5, 0.5 )
-		dxSetShaderValue( self.shader, "bolderColor", self.bolderColor )
+		dxSetShaderValue( self.shader, "borderColor", self.borderColor )
 
 		return self
 	end;
