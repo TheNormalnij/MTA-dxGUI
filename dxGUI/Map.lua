@@ -198,6 +198,9 @@ dxGUI.baseClass:subclass{
 			local mapOffsetX = ( self.w - self.radarW ) / 2
 			local mapOffsetY = ( self.h - self.radarH ) / 2
 
+			local blipSizeMod = 32 / 4 * self.blipZoom
+			local bS, halfBS
+
 			if self.mapIsCircle then
 				local radius = self.mapRadius
 
@@ -216,8 +219,8 @@ dxGUI.baseClass:subclass{
 						if iconID ~= 0 then
 							bcR, bcG, bcB = 255, 255, 255
 						end
-						local bS = 32 * blip:getSize() / 4
-						local halfBS = bS / 2
+						bS = blip:getSize() * blipSizeMod
+						halfBS = bS / 2
 
 						if pixelDistance < radius then
 							dxDrawImage( 
@@ -252,9 +255,8 @@ dxGUI.baseClass:subclass{
 						if iconID ~= 0 then
 							bcR, bcG, bcB = 255, 255, 255
 						end
-						local bS = 32 * blip:getSize() / 4
-						local halfBS = bS / 2
-
+						bS = blip:getSize() * blipSizeMod
+						halfBS = bS / 2
 						
 						local drawBlipX = drawCenterX + pixelDistance * math.cos( blipRot - math.pi/2 ) - halfBS
 						local drawBlipY = drawCenterY + pixelDistance * math.sin( blipRot - math.pi/2 ) - halfBS
@@ -446,6 +448,7 @@ dxGUI.baseClass:subclass{
 		if self.mapRadius then
 			self.mapRadius = self.mapRadius * scale
 		end
+		self.blipZoom = self.blipZoom * scale
 	end;
 }
 
