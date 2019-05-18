@@ -23,16 +23,16 @@ dxConstruction:subclass{
 
 			if self.resize and self.list then
 				if self.direction then
-					slider:setSize( slider.w, 1 / ( itemsCount - math.ceil( self.list.h / self.list.construction.h ) + 1 ) * bar.h )
+					slider:setSize( slider.w, 1 / ( math.max( #self.list.items - math.ceil( self.list.h / self.list.construction.h ), 0 ) + 1 ) * self.h * ( 1 - self.deadZone )  )
 				else
-					slider:setSize( 1 / ( itemsCount - math.ceil( self.list.w / self.list.construction.w ) + 1 ) * bar.h, slider.h  )
+					slider:setSize( 1 / ( #self.list.items - math.ceil( self.list.w / self.list.construction.w ) + 1 ) * self.h, slider.h  )
 				end
 			end
 
 			if self.direction then
-				slider:setPosition( slider.x, bar.y + ( 1 - self.deadZone ) * bar.h * progress + bar.h * self.deadZone / 2 )
+				slider:setPosition( slider.x, self.y + ( 1 - self.deadZone ) * ( self.h - slider.h ) * progress + self.h * self.deadZone / 2 )
 			else
-				slider:setPosition( bar.x + ( 1 - self.deadZone ) * bar.w * progress + bar.w * self.deadZone / 2 - slider.w / 2, slider.y )
+				slider:setPosition( self.x + ( 1 - self.deadZone ) * self.w * progress + self.w * self.deadZone / 2 - slider.w / 2, slider.y )
 			end
 
 			if self.onChangeProgress then
@@ -78,6 +78,7 @@ dxConstruction:subclass{
 		if list then
 			local anim = Anim.find( 'slider-list-sync' )
 			self:addAnim( anim, list )
+			self.list = list
 		end
 	end;
 }
