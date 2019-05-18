@@ -1,7 +1,4 @@
 
-local isClient = triggerServerEvent and true
-local isServer = triggerClientEvent and true
-
 function table.find( t, value )
 	for i, _value in pairs( t ) do
 		if _value == value then
@@ -20,7 +17,7 @@ function table.findIn( t, In, value )
 	end
 	for i, data in pairs( t ) do
 		if data[In] == value then
-			return i
+			return i, data
 		end
 	end
 	return false
@@ -31,7 +28,7 @@ function table.getSize( t )
 	local key =  next( t )
 	while key do
 		i = i + 1
-		key = next( t, i )
+		key = next( t, key )
 	end
 	return i
 end
@@ -53,13 +50,21 @@ function table.unite( table1, table2, recursive )
 	if type( table2 ) ~= 'table' then
 		error( 'Bad argument #2, got ' .. type( table2 ), 2 )
 	end
-	for key, value in pairs( table2 ) do
-		if type( value ) ~= 'table' or not recursive then
+
+	if recursive then
+		for key, value in pairs( table2 ) do
+			if type( value ) == 'table' then
+				table1[key] = table.unite( table1[key] or {}, value, true )
+			else
+				table1[key] = value;
+			end
+		end		
+	else
+		for key, value in pairs( table2 ) do
 			table1[key] = value;
-		else
-			table1[key] = table.unite( table1[key] or {}, value, true )
 		end
 	end
+
 	return table1
 end
 
@@ -110,9 +115,12 @@ function table.getRandomValue( t, anyKeys )
 		error( 'Bad argument #1, got ' .. type( t ), 2 )
 	end
 	if anyKeys then
-		local i = math.random( table.getSize( t ) )
-		if i ~= 0 then
-			local key, value = next( t, i )
+		local size = math.random( table.getSize( t ) )
+		if size ~= 0 then
+			local key, value = next( t )
+			for i = 2, size do
+				key, value = next( t, key )
+			end
 			return value, key
 		else
 			return false
@@ -208,6 +216,14 @@ function math.fromBitvise( int, valuesCount )
 	return unpack( o )
 end
 
+function math.getMilliseconds( ms, sec, min, hours )
+	ms = ms or 0
+	sec = sec or 0
+	min = min or 0
+	hours = hours or 0
+	return ((((hours * 60) + min) * 60) + sec) * 1000 + ms
+end;
+
 -----
 
 local tocolor = tocolor
@@ -216,9 +232,9 @@ color = {
 
 	HEXtoRGB = function( color )
 		local b = color % 2^8
-		local g = ( ( color - b ) % 2^16 ) / 2^8
-		local r = ( ( color - b - g * 2^8 ) % 2^24 ) / 2^16
-		local a = ( ( color - b - g * 2^8 - r * 2^16 ) % 2^32 ) / 2^24
+		local g = math.floor( ( ( color - b ) % 2^16 ) / 2^8 )
+		local r = math.floor( ( ( color - b - g * 2^8 ) % 2^24 ) / 2^16 )
+		local a = math.floor( ( ( color - b - g * 2^8 - r * 2^16 ) % 2^32 ) / 2^24 )
 		return r, g, b, a
 	end;
 
@@ -384,48 +400,28 @@ function Element:getPositionFromOffset( vector )
 	local m = self:getMatrix( )
 	return m:transformPosition( vector )
 end
+ 
+function Timer.createAttachedToTime( _func, secondsFromStartDay, interval, count, callBack )
+	local rt = getRealTime()
+	local thisDayStart = rt.timestamp - rt.hour * 60 * 60 - rt.minute * 60 - rt.second
+	local timeToStart
+	if rt.timestamp > thisDayStart + secondsFromStartDay then
+		local executesCount = math.ceil( (rt.timestamp - thisDayStart - secondsFromStartDay) / interval )
+		timeToStart = thisDayStart - rt.timestamp + (secondsFromStartDay + interval * executesCount)   
+	else
+		timeToStart = (thisDayStart + secondsFromStartDay) - rt.timestamp
+	end
 
-if isClient then
-
-	local isEscapeBlocked = false
-	local handlers = {}
-
-	local keyHandler
-
-	function keyHandler( key, state )
-		if key == 'escape' then
-			if not state or isEscapeBlocked then
-				return
-			end
-			cancelEvent()
-			for _, handler in pairs( handlers ) do
-				handler()
-			end
-			handlers = {}
-			isEscapeBlocked = true
-			removeEventHandler( 'onClientKey', root, keyHandler )
-		else
-			isEscapeBlocked = false
-		end
-	end;
-
-	function bindEscapeOnce( _func )
-		if table.find( handlers, _func ) then
-			return false
-		else
-			table.insert( handlers, _func )
-			if #handlers == 1 then
-				addEventHandler( 'onClientKey', root, keyHandler )
+	local firstFunction = function( )
+		count = count - 1
+		_func()
+		if count ~= 0 then
+			local timer = Timer( _func, interval * 1000, count == -1 and 0 or count )
+			if callBack then
+				callBack( timer )
 			end
 		end
 	end
 
-	function unbindEscapeOnce( _func )
-		if table.removeValue( handlers, _func ) then
-			if #handlers == 0 then
-				removeEventHandler( 'onClientKey', root, keyHandler )
-			end
-		end
-	end
-
+	Timer( firstFunction, timeToStart * 1000, 1 )
 end
