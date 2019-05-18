@@ -440,6 +440,13 @@ dxGUI.baseClass:subclass{
 			self.blipObjects[source] = nil
 		end
 	end;
+
+	setScale = function( self, scale, scaleY )
+		self.w, self.h = self.w * scale, self.h * scaleY
+		if self.mapRadius then
+			self.mapRadius = self.mapRadius * scale
+		end
+	end;
 }
 
 Anim{
