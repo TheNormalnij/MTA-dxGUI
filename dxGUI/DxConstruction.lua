@@ -385,10 +385,10 @@ dxConstruction = dxGUI.baseClass:subclass{
 		else
 			scaleY = scaleY or scale
 		end
-		local screen = self.screen
-		if screen then
-			--local x, y = screen:getObjectPosition( self )
-			--screen:setObjectPosition( self, x + ( self.w - self.w * scale ) / 2, y + ( self.h - self.h * scaleY ) / 2 )
+		if self.renderTarget then
+			local rtW, rtH = dxGetMaterialSize( self.renderTarget )
+			self.renderTarget:destroy()
+			self.renderTarget = dxCreateRenderTarget( rtW * scale, rtH * scaleY, self.newRenderTarget and self.newRenderTarget.withAlpha or false )
 		end
 		self.w, self.h = self.w * scale, self.h * scaleY
 		for _, object in self:objectPairs() do
@@ -397,8 +397,6 @@ dxConstruction = dxGUI.baseClass:subclass{
 			if object.setScale then
 				object:setScale( scale, scaleY )
 			else
-				--local x, y = object:getPosition()
-				--object:setPosition( x * scale, y * scaleY )	
 				object.w, object.h = object.w * scale, object.h * scaleY
 			end
 

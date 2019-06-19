@@ -70,4 +70,20 @@ dxConstruction:subclass{
 			dxDrawImage( self.x, self.y, self.w, self.h, self.maskShader )
 		end
 	end;
+
+	setScale = function( self, scale, scaleY )
+		dxConstruction.setScale( self, scale, scaleY )
+
+		self.mask:setPosition( self.mask.x * scale, self.mask.y * scaleY )
+		if self.mask.setScale then
+			self.mask:setScale( scale, scaleY )
+		else
+			self.mask.w, self.mask.h = self.mask.w * scale, self.mask.h * scaleY
+		end
+
+		if self.mask.renderTarget then
+			self.mask.renderTarget:destroy()
+			self.mask.renderTarget = dxCreateRenderTarget( self.mask.w, self.mask.h, true )
+		end
+	end;
 }
