@@ -3,7 +3,7 @@ dxConstruction:subclass{
 	isBlocked  = false;
 	maxLen     = 255;
 	caret      = 0;
-	filter = false;
+	filter     = false;
 
 	create = function( self )
 		--if not self.objects.text then
