@@ -16,7 +16,7 @@ dxGUI.baseClass:subclass{
 	leftX = -3000;
 	rightX = 3000;
 	topY = -3000;
-	bottopY = 3000;
+	bottomY = 3000;
 
 	mapIsCircle = false;
 
@@ -50,6 +50,20 @@ dxGUI.baseClass:subclass{
 
 		self.mapCenterX = self.mapCenterX or self.mapW / 2 
 		self.mapCenterY = self.mapCenterY or self.mapH / 2
+
+		local offsetX = ( self.mapW / 2 - self.mapCenterX )
+		if offsetX ~= 0 then
+			self.worldOffsetFromCenterX = ( self.rightX - self.leftX ) / ( self.mapW / 2 - self.mapCenterX ) * 4
+		else
+			self.worldOffsetFromCenterX = 0
+		end
+
+		local offsetY = ( self.mapCenterY - self.mapH / 2 )
+		if offsetY ~= 0 then
+			self.worldOffsetFromCenterY = ( self.topY - self.bottomY ) / offsetY * 4
+		else
+			self.worldOffsetFromCenterY = 0
+		end
 
 		self.UVPosition = { 0, 0 }
 
@@ -152,7 +166,11 @@ dxGUI.baseClass:subclass{
 
 	drawOnShader = function ( self )
 
-		dxSetShaderValue( self.shader, "gUVScale", 1/self.zoom, 1/self.zoom * self.h/self.w )
+		local camRootRad = self.camRootRad
+		dxSetShaderValue( self.shader, "gUVRotAngle", -camRootRad )
+
+		local shaderZoom = 1/self.zoom
+		dxSetShaderValue( self.shader, "gUVScale", shaderZoom, shaderZoom * self.w/self.h )
 		dxSetShaderValue( self.shader, "gUVPosition", self.UVPosition[1], self.UVPosition[2] )
 
 		dxDrawImage( self.x, self.y, self.w, self.h, self.shader )
@@ -185,9 +203,6 @@ dxGUI.baseClass:subclass{
 		end
 
 		local lpPos = localPlayer:getPosition()
-		local camRootRad = self.camRootRad
-		dxSetShaderValue( self.shader, "gUVRotAngle", -camRootRad )
-
 		local pX = lpPos.x
 		local pY = lpPos.y
 
@@ -212,7 +227,7 @@ dxGUI.baseClass:subclass{
 					local attached = getElementAttachedTo( blip )
 					if distance <= blip:getVisibleDistance() and attached ~= localPlayer then
 
-						local pixelDistance = distance / self.bottopY * self.zoom * self.w / 2
+						local pixelDistance = distance / self.bottomY * self.zoom * self.w / 2
 						local iconID = blip:getIcon()
 
 						local bcR, bcG, bcB, bcA = getBlipColor( blip )
@@ -248,7 +263,7 @@ dxGUI.baseClass:subclass{
 					local attached = getElementAttachedTo( blip )
 					if distance <= blip:getVisibleDistance() and attached ~= localPlayer then
 
-						local pixelDistance = distance / self.bottopY * self.zoom * self.w / 2
+						local pixelDistance = distance / self.bottomY * self.zoom * self.w / 2
 						local iconID = blip:getIcon()
 
 						local bcR, bcG, bcB, bcA = getBlipColor( blip )
@@ -291,7 +306,7 @@ dxGUI.baseClass:subclass{
 
 	drawInRenderTarget = function( self )
 
-		dxSetShaderValue( self.shader, "gUVScale", 1/self.zoom, 1/self.zoom * self.h/self.w )
+		dxSetShaderValue( self.shader, "gUVScale", 1/self.zoom, 1/self.zoom * self.h/self.w * self.mapW / self.mapH )
 		dxSetShaderValue( self.shader, "gUVPosition", self.UVPosition[1], self.UVPosition[2] )
 
 		self.renderTarget:setAsTarget()
@@ -312,9 +327,8 @@ dxGUI.baseClass:subclass{
 				if not self.checkBlipDistance
 					or ( ( lpPos.x - blipX )^2 + ( lpPos.y - blipY )^2 ) ^ 0.5 <= blip:getVisibleDistance()
 				then
-
-					local drawBlipX = self.mapW / ( -self.leftX + self.rightX ) * ( blipX + 3000 )
-					local drawBlipY = self.mapH / ( -self.topY + self.bottopY ) * ( -blipY + 3000 )
+					local drawBlipX = self.mapW / ( -self.leftX + self.rightX ) * ( blipX - self.leftX )
+					local drawBlipY = self.mapH / ( -self.topY + self.bottomY ) * ( -blipY - self.topY )
 
 					self:drawBlip( blip, drawBlipX, drawBlipY )
 				end
@@ -381,13 +395,15 @@ dxGUI.baseClass:subclass{
 		local dcX, dcY = self:getDrawCenter()
 		-- cX = drawCenterX + vPos.x / 6000 * screenW  * self.zoom - 16
 		if self.onMapClick then
-			self:onMapClick( button, state, cX, cY, ( cX - dcX ) * 6000 / self.w / self.zoom, ( cY - dcY ) * -6000 / self.h / self.zoom * self.h/self.w )
+			local x = ( cX - dcX ) * ( self.rightX - self.leftX ) / self.w / self.zoom + self.worldOffsetFromCenterX * 1.25
+			local y = ( cY - dcY ) * -( self.bottomY - self.topY ) / self.h / self.zoom * self.h/self.w * self.mapW / self.mapH + self.worldOffsetFromCenterY * 1.25
+			self:onMapClick( button, state, cX, cY, x, y )
 		end
 	end;
 
 	getDrawCenter = function( self )
 		return self.x + self.w / 2 - self.w * self.UVPosition[1] * self.zoom,
-			self.y + self.h / 2 - self.h * self.UVPosition[2] * self.zoom * self.w/self.h
+			self.y + self.h / 2 - self.h * self.UVPosition[2] * self.zoom * self.w/self.h * self.mapH / self.mapW
 	end;
 
 	getOffScreenSize = function( self )
@@ -432,7 +448,7 @@ dxGUI.baseClass:subclass{
 
 	setMapCenterPosition = function( self, x, y )
 		self.UVPosition[1] = -0.5 + ( x - self.leftX ) / ( self.rightX - self.leftX )
-		self.UVPosition[2] = -0.5 + ( y - self.bottopY ) / ( self.topY - self.bottopY )
+		self.UVPosition[2] = -0.5 + ( y - self.bottomY ) / ( self.topY - self.bottomY )
 	end;
 
 	onElementDestroy = function( self )
