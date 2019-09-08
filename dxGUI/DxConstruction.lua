@@ -429,13 +429,15 @@ do
 		}
 	)
 
+	local mainScreen = dxConstruction.screen
+	local dxSetAspectRatioAdjustmentEnabled = dxSetAspectRatioAdjustmentEnabled
 	addEventHandler( 'onClientRender', root, function()
 		dxSetAspectRatioAdjustmentEnabled( false )
-		dxConstruction.screen:draw()
+		mainScreen:draw()
 	end )
 
 	addEventHandler( 'onClientClick', root, function( button, state, cX, cY )
-		dxConstruction.screen:onClick( button, state, cX, cY )
+		mainScreen:onClick( button, state, cX, cY )
 	end )
 
 
@@ -445,7 +447,7 @@ do
 	addEventHandler( 'onClientCursorMove', root, function( _, _, cX, cY )
 		if not isCursorShowing() then return end
 		local tree = { }
-		dxConstruction.screen:onCursorMove( true, cX, cY, lastX, lastY, lastTree, tree, 1 )
+		mainScreen:onCursorMove( true, cX, cY, lastX, lastY, lastTree, tree, 1 )
 
 		lastTree = tree
 		lastX, lastY = cX, cY
@@ -454,9 +456,9 @@ do
 	addEventHandler( 'onClientKey', root, function( key )
 		if isCursorShowing() then
 			if key == 'mouse_wheel_up' then
-				dxConstruction.screen:onWheel( 1 )
+				mainScreen:onWheel( 1 )
 			elseif key == 'mouse_wheel_down' then
-				dxConstruction.screen:onWheel( -1 )
+				mainScreen:onWheel( -1 )
 			end
 		end
 	end )
