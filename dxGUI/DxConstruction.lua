@@ -177,14 +177,22 @@ dxConstruction = dxGUI.baseClass:subclass{
 
 	end;
 
-	removeObject = function( self, id )
-		local object = self.objects[id]
+	removeObject = function( self, arg )
+		local id, object
+		if type( arg ) == "table" then
+			object = arg
+			id = self:getObjectID( object )
+		else
+			id = arg
+			object = self.objects[id]
+		end
 		if not object then return false; end
 		for i = 1, #self.plane do
 			if self.plane[i] == object then
 				table.remove( self.plane, i )
-				self.objects[id] = nil
-				--setmetatable( object, nil ) -- HZ -- UPD 25 Juni 2016: реально, зачем это было
+				if id then
+					self.objects[id] = nil
+				end
 				local x, y = object:getPosition( )
 				object:setPosition( x - self.x, y - self.y )
 				return true
