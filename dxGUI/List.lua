@@ -296,6 +296,13 @@ dxGUI.baseClass:subclass{
 		return self.active
 	end;
 
+	getItemPosition = function( self, index )
+		local cItemY = math.ceil( index / self.maxHorizontalItems )
+		local cItemX = index - ( (cItemY-1) * self.maxHorizontalItems )
+		return self.x + (cItemX - 1) * self.construction.w - self.offsetX,
+			self.y + (cItemY - 1) * self.construction.h - self.offsetY
+	end;
+
 	getItemIndexFromPosition = function( self, x, y )
 		local cItemX = math.ceil( ( x - self.x + self.offsetX ) / self.construction.w )
 		local cItemY = math.ceil( ( y - self.y + self.offsetY ) / self.construction.h )
