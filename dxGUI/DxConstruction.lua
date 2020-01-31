@@ -361,6 +361,23 @@ dxConstruction = dxGUI.baseClass:subclass{
 		self.show = state
 	end;
 
+	setShow = function( self, show )
+		if show == true or show == false then
+			self.show = show
+			self:onShow( show )
+			return true
+		end
+		return false
+	end;
+
+	onShow = function( self, show )
+		for _, object in self:objectPairs() do
+			if object.onShow and object:isShow() then
+				object:onShow( show )
+			end
+		end
+	end;
+
 	getAlpha = function( self )
 		return self.alpha
 	end;
