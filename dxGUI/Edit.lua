@@ -196,6 +196,14 @@ dxConstruction:subclass{
 		return false
 	end;
 
+	onShow = function( self, show )
+		if not show then
+			if self.input:isActive() then
+				self.input:deactivate()
+			end
+		end
+	end;
+
 	onCursorMove = function( self, inStatus )
 		if self.isBlocked then
 
