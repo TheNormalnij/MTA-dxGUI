@@ -9,9 +9,6 @@ dxConstruction:subclass{
 		
 		self:setText( self.text )
 
-		self.input = Input:create{ }
-		--self.input:bind( 'enter', true, self.onClick, self )
-
 		self:setEnabled( self.enabled )
 		return self
 	end;
