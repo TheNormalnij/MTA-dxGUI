@@ -310,9 +310,7 @@ dxConstruction = dxGUI.baseClass:subclass{
 			table.insert( self.objects, 1 )
 		end
 
-		if gui._onClick then
-			gui:_onClick( button, state, cX, cY )
-		elseif gui.onClick then
+		if gui.onClick then
 			gui:onClick( button, state, cX, cY )
 		end
 

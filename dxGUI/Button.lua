@@ -54,13 +54,15 @@ dxConstruction:subclass{
 		return self.enabled
 	end;
 
-	_onClick = function( self, button, state )
-		if self.enabled then
-			if self.enabled and button == 'left' and state == 'down' then
+	onClick = function( self, button, state )
+		if self.enabled and button == 'left' or button == 'right' then
+			if self.enabled and state == 'down' then
 				self:setStatus( 'clicked' )
-			elseif self.enabled and button == 'left' and state == 'up' then
-				if self.onClick then
-					self:onClick( )
+			elseif self.enabled and state == 'up' then
+				if button == 'left' and self.onLeftMouseClick then
+					self:onLeftMouseClick( )
+				elseif self.onRightMouseClick then
+					self:onRightMouseClick( )
 				end
 				self:setStatus( self:isOnCursor() and 'oncursor' or 'default' )
 			end
