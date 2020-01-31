@@ -1,0 +1,37 @@
+<meta>
+	<oop>true</oop>
+
+	<!-- dxGUI libary -->
+
+	<script src="classutils.lua" type="shared" />
+	<script src="utilits.lua" type="shared" />
+
+	<file src="dxGUI/shaders/hud_mask.fx" />
+	<file src="dxGUI/shaders/tex_matrix.fx" />
+	<file src="dxGUI/shaders/circle.fx" />
+	<file src="dxGUI/shaders/blur.fx" />
+
+	<script src="dxGUI/baseClass.lua" type="client" />
+	<script src="dxGUI/DxConstruction.lua" type="client" />
+	<script src="dxGUI/dxInput.lua" type="client" />
+	<script src="dxGUI/Image.lua" type="client" />
+	<script src="dxGUI/ImageSection.lua" type="client" />
+	<script src="dxGUI/Text.lua" type="client" />
+	<script src="dxGUI/TextLines.lua" type="client" />
+	<script src="dxGUI/Rectangle.lua" type="client" />
+	<script src="dxGUI/Anim.lua" type="client" />
+	<script src="dxGUI/Button.lua" type="client" />
+	<script src="dxGUI/List.lua" type="client" />
+	<script src="dxGUI/Tabs.lua" type="client" />
+	<script src="dxGUI/Checkbox.lua" type="client" />
+	<script src="dxGUI/Edit.lua" type="client" />
+	<script src="dxGUI/Gradient.lua" type="client" />
+	<script src="dxGUI/Scroll.lua" type="client" />
+	<script src="dxGUI/Slider.lua" type="client" />
+	<script src="dxGUI/Map.lua" type="client" />
+	<script src="dxGUI/Circle.lua" type="client" />
+	<script src="dxGUI/Bar.lua" type="client" />
+	<script src="dxGUI/Cursor.lua" type="client" />
+	<script src="dxGUI/RenderTarget.lua" type="client" />
+	<script src="dxGUI/Blur.lua" type="client" />
+</meta>
