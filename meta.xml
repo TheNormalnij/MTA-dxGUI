@@ -26,7 +26,6 @@
 	<script src="dxGUI/Checkbox.lua" type="client" />
 	<script src="dxGUI/Edit.lua" type="client" />
 	<script src="dxGUI/Gradient.lua" type="client" />
-	<script src="dxGUI/Scroll.lua" type="client" />
 	<script src="dxGUI/Slider.lua" type="client" />
 	<script src="dxGUI/Map.lua" type="client" />
 	<script src="dxGUI/Circle.lua" type="client" />
