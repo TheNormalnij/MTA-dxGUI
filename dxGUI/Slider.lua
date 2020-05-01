@@ -67,7 +67,7 @@ dxConstruction:subclass{
 
 	attachList = function( self, list )
 		if self.list then
-			for id, anim in pairs( self.anims ) do
+			for id, anim in pairs( self.preAnims ) do
 				if anim.name == 'slider-list-sync' then
 					self:removeAnim( id )
 					break
