@@ -308,54 +308,6 @@ Anim{
 	end;
 }
 
-Anim{
-	name = 'Carete';
-
-	create = function( self, gui, time, r, g, b )
-		self.time = time or 500
-		if r and g and b then
-			self.vColor = { r, g, b }
-		else
-			self.vColor = { color.HEXtoRGB( gui.objects.text:getColor() ) }
-		end
-
-		local caret = gui:initObject{ type = 'rectangle', x = 0, y = 0, w = 2 }
-		gui:addObject( caret, 'caret' )
-		return self
-	end;
-
-	update = function( self, gui )
-		local textObject = gui.objects.text
-
-		gui.objects.caret.show = gui.input == Input.get()
-
-		local offsetX
-		local caret = gui.caret
-		if textObject.alignX == 'left' then
-			offsetX = dxGetTextWidth( utfSub( gui.objects.text.text, 1, caret ), textObject.scale, textObject.font )
-		elseif textObject.alignX == 'right' then
-			local textSize = utfLen( gui.objects.text.text )
-			offsetX = math.max( 0,
-				textObject.w - dxGetTextWidth( utfSub( gui.objects.text.text, caret + 1, textSize ), textObject.scale, textObject.font )
-			)
-		else
-			local textSize = dxGetTextWidth( gui.objects.text.text, textObject.scale, textObject.font )
-			offsetX = dxGetTextWidth( utfSub( gui.objects.text.text, 1, caret ), textObject.scale, textObject.font ) + (textObject.w - textSize) / 2
-		end
-
-		local tH = dxGetFontHeight( textObject.scale, textObject.font )
-
-		local alpha = math.sin( ( getTickCount() % self.time / self.time ) * math.pi ) * 255
-
-		gui.objects.caret.x = textObject.x + offsetX
-		gui.objects.caret.color = tocolor( self.vColor[1], self.vColor[2], self.vColor[3], alpha )
-		gui.objects.caret.y = gui.objects.text.y + ( gui.objects.text.h - tH ) / 2
-		gui.objects.caret.h = tH
-
-		return true
-	end;
-}
-
 -- List
 Anim{
 	name = 'softItemMoved';
