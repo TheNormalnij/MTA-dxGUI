@@ -138,12 +138,20 @@ function table.getRandomValue( t, anyKeys )
 end
 
 function table.reverse( t )
-	for i = 1, math.floor( #t / 2 ) do
-		t[i], t[#t - i + 1] = t[#t - i + 1], t[i]
+	local size = #t
+	for i = 1, math.floor( size / 2 ) do
+		t[i], t[size - i + 1] = t[size - i + 1], t[i]
 	end
 end
 
-
+function table.erase( t )
+	if type( t ) ~= 'table' then
+		error( 'Bad argument #1, got ' .. type( t ), 2 )
+	end
+	for k in pairs( t ) do
+		t[k] = nil
+	end
+end
 
 -----
 
@@ -158,7 +166,7 @@ end
 function string.moneyFormating( money, separator )
 	local formatted = tostring( money )
 	local formatType = '%1' .. ( separator or ' ' ).. '%2'
-	while true do  
+	while true do
 		formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", formatType)
 		if (k==0) then
 			break
@@ -167,7 +175,22 @@ function string.moneyFormating( money, separator )
 	return formatted
 end
 
------
+----
+
+do
+	local PI = math.pi
+	local PI2 = 2 * math.pi
+	local atan2 = math.atan2
+	local abs = math.abs
+	function math.isInViewRange( x1, y1, x2, y2, rot1, halfViewAngle )
+		x2 = ( PI - atan2( ( x1 - x2 ), ( y1 - y2 ) ) )  % PI2
+		x1 = abs( rot1 - x2 )
+		if x1 > PI then
+			x1 = PI2 - x1
+		end
+		return x1 < halfViewAngle
+	end
+end
 
 function math.round(number, decimals, method)
 	decimals = decimals or 0
@@ -181,9 +204,11 @@ function math.clamp( min, value, max )
 end
 
 function math.isBetween( from, to, val )
-	local min = math.min( from, to )
-	local max = from == min and to or from
-	return min <= val and val <= max
+	if from < to then
+		return from <= val and val <= to
+	else
+		return to <= val and val <= from
+	end
 end
 
 function math.toBitvise( ... )
@@ -223,6 +248,34 @@ function math.getMilliseconds( ms, sec, min, hours )
 	hours = hours or 0
 	return ((((hours * 60) + min) * 60) + sec) * 1000 + ms
 end;
+
+function math.getChekedValueInRange( from, to, checkFun )
+	if from > to then
+		error( "Wrong range", 2 )
+	end
+
+	local half
+	local floor = math.floor
+
+	local function checkInstance( )
+		if from == to then
+			return
+		end
+		if from + 1 == to then
+			from = checkFun( to ) and to or from
+			return
+		end
+		half = floor( from + ( to - from ) / 2 )
+		if checkFun( half ) then
+			from = half
+		else
+			to = half
+		end
+		return checkInstance( )
+	end
+	checkInstance()
+	return from
+end
 
 -----
 

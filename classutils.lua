@@ -180,6 +180,7 @@ end
 
 function class_mt:destroyRPC( )
 	self.__RPC:destroy()
+	self.__RPC = nil
 end
 
 --
