@@ -16,7 +16,8 @@ dxConstruction:subclass{
 		--self.construction.objects.text.input = Input{
 		self.input = Input()
 		self.input.sticked = true
-		self.input:bind( 'backspace', true, self.remove, self, 1 )
+		self.input:bind( 'backspace', true, self.removeLeft, self, 1 )
+		self.input:bind( 'delete', true, self.removeRight, self, 1 )
 		self.input:bind( 'arrow_l', true, self.moveCarete, self, -1 )
 		self.input:bind( 'arrow_r', true, self.moveCarete, self, 1 )
 		self.input:bind( 'enter', true, self.input.deactivate, self.input )
@@ -160,7 +161,7 @@ dxConstruction:subclass{
 		return true
 	end;
 
-	remove = function( self, count )
+	removeLeft = function( self, count )
 		if self.caret == 0 then return false; end
 		if self.isBlocked then return false; end
 		local text = self:getText()
@@ -168,6 +169,18 @@ dxConstruction:subclass{
 		count = self.caret - count >= 0 and count or self.caret
 		self:setText( utfSub( text, 0, self.caret - count ) .. utfSub( text, self.caret + 1, utfLen( text ) ) )
 		self.caret = self.caret - count
+		return true
+	end;
+
+	removeRight = function( self, count )
+		iprint( count )
+		count = math.min( #self:getText() - self.caret, count )
+		iprint( count )
+		if count == 0 then return false; end
+		if self.isBlocked then return false; end
+		local text = self:getText()
+
+		self:setText( utfSub( text, 0, self.caret ) .. utfSub( text, self.caret + count + 1, utfLen( text ) ) )
 		return true
 	end;
 
