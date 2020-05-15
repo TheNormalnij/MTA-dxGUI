@@ -79,6 +79,12 @@ Input = class{
 
 ---------------------------
 
+addEventHandler( "onClientPaste", root, function( text )
+	if currentInput and currentInput.onPaste then
+		currentInput:onPaste( text )
+	end
+end )
+
 addEventHandler( 'onClientCharacter', root, function( character )
 	if currentInput and currentInput.onCharacter then
 		currentInput:onCharacter( character )

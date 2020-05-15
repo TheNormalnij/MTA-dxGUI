@@ -26,6 +26,10 @@ dxConstruction:subclass{
 			self:add( character )
 		end;
 
+		self.input.onPaste = function( input, text )
+			self:add( text )
+		end
+
 		self:setPlaceholderText( self.placeholderText )
 		self:setPlaceholderShow( self:getText() == '' )
 
