@@ -32,11 +32,17 @@ dxGUI.baseClass:subclass{
 
 	replaceMTACursor = function( self, state )
 		if state == true then
+			if self.draw == self.drawImage then
+				self:addEventHandler( "onClientResourceStop", resourceRoot, self.onResourceStop )
+			end
 			self.draw = self.syncedDraw
 			setCursorAlpha( 0 )
 		else
+			if self.draw == self.syncedDraw then
+				self:removeEventHandler( "onClientResourceStop", resourceRoot, self.onResourceStop )
+			end
 			self.draw = self.drawImage
-			setCursorAlpha( 255 )			
+			setCursorAlpha( 255 )
 		end
 	end;
 
@@ -70,11 +76,18 @@ dxGUI.baseClass:subclass{
 				end
 			end
 			self.show = show
-			showCursor( show )
-			setCursorAlpha( show and 0 or 255 )
+			if self.draw == self.syncedDraw then
+				showCursor( show )
+				setCursorAlpha( show and 0 or 255 )
+			end
 			return true
 		end
 		return false
+	end;
+
+	onResourceStop = function( self )
+		self:setShow( false )
+		setCursorAlpha( 255 )
 	end;
 
 }
