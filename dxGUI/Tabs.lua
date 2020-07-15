@@ -80,8 +80,8 @@ dxGUI.tabs = dxConstruction:subclass{
 				table.insert( t, data )
 			end			
 		end
-		for i = 1, #self.items do
-			for guiID, data in pairs( self.items[i] ) do
+		for id, tab in pairs( self.items ) do
+			for guiID, data in pairs( tab ) do
 				table.insert( t, data )
 			end
 		end
