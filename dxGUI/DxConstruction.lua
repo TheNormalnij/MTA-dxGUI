@@ -442,7 +442,9 @@ dxConstruction = dxGUI.baseClass:subclass{
 				scaleY = 1
 			end
 
-			self:setScale( scaleX, scaleY )
+			if scaleX ~= 1 or scaleY ~= 1 then
+				self:setScale( scaleX, scaleY )
+			end
 		else
 			local scaleX
 			if self.w > self.screen.w then
@@ -458,7 +460,10 @@ dxConstruction = dxGUI.baseClass:subclass{
 				scaleY = 1
 			end
 
-			self:setScale( scaleX < scaleY and scaleX or scaleY )
+			scaleX = scaleX < scaleY and scaleX or scaleY
+			if scaleX ~= 1 then
+				self:setScale( scaleX )
+			end
 		end
 	end;
 
