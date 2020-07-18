@@ -177,9 +177,7 @@ dxConstruction:subclass{
 	end;
 
 	removeRight = function( self, count )
-		iprint( count )
 		count = math.min( #self:getText() - self.caret, count )
-		iprint( count )
 		if count == 0 then return false; end
 		if self.isBlocked then return false; end
 		local text = self:getText()
