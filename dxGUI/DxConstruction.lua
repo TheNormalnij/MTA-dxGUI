@@ -426,7 +426,7 @@ dxConstruction = dxGUI.baseClass:subclass{
 		end
 	end;
 
-	fitOnSreen = function( self, saveProportions )
+	fitOnScreen = function( self, saveProportions )
 		if saveProportions == false then
 			local scaleX
 			if self.w > self.screen.w then
