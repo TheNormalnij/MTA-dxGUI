@@ -426,6 +426,42 @@ dxConstruction = dxGUI.baseClass:subclass{
 		end
 	end;
 
+	fitOnSreen = function( self, saveProportions )
+		if saveProportions == false then
+			local scaleX
+			if self.w > self.screen.w then
+				scaleX = self.screen.w / self.w 
+			else
+				scaleX = 1
+			end
+
+			local scaleY
+			if self.h > self.screen.h then
+				scaleY = self.screen.h / self.h 
+			else
+				scaleY = 1
+			end
+
+			self:setScale( scaleX, scaleY )
+		else
+			local scaleX
+			if self.w > self.screen.w then
+				scaleX = self.screen.w / self.w 
+			else
+				scaleX = 1
+			end
+
+			local scaleY
+			if self.h > self.screen.h then
+				scaleY = self.screen.h / self.h 
+			else
+				scaleY = 1
+			end
+
+			self:setScale( scaleX < scaleY and scaleX or scaleY )
+		end
+	end;
+
 	objectPairs = function( self )
 		return next, self.plane
 	end;
