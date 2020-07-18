@@ -80,6 +80,12 @@ dxConstruction:subclass{
 				textObject.alignX = self.defaultTextAlign
 			end
 			self:setPlaceholderShow( text == '' and Input.get() ~= self.input )
+
+			local textSize = utfLen( text )
+			if textSize < self.caret then
+				self.caret = textSize + 1
+			end
+
 			if self.onChanged and ( callEvent == nil or callEvent ) then
 				self:onChanged( text )
 			end
