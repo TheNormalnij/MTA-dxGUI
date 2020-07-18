@@ -263,7 +263,8 @@ dxConstruction:subclass{
 
 		local newCaretePos = math.getChekedValueInRange( 0, utfLen( text ), 
 			function( value )
-				return ( startTextX + dxGetTextWidth( utfSub( text, 0, value ), scale, font, colorCoded ) ) <= cX
+				return ( startTextX + dxGetTextWidth( utfSub( text, 0, value ), scale, font, colorCoded )
+					- dxGetTextWidth( utfSub( text, value - 1, value ), scale, font, colorCoded ) / 4 ) <= cX
 			end
 		)
 
