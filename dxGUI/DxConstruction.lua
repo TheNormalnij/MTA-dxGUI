@@ -30,10 +30,11 @@ dxConstruction = dxGUI.baseClass:subclass{
 				self.newRenderTarget.withAlpha or false
 			)
 		end
+
 		if not self.objects then
-			outputDebugString( 'Construction must have objects', 2 )
-			return false
+			self.objects = {}
 		end
+
 		local objects = {}
 		for guiID, data in pairs( self.objects ) do
 			if data.p then
@@ -94,7 +95,7 @@ dxConstruction = dxGUI.baseClass:subclass{
 					end
 				else
 					if parent then
-						self:errorHandler( '"' .. dataType .. '" request "' .. parent .. '" but it not found.'  )
+						self:errorHandler( string.format('"%s" request "%s" but it not found.', dataType, parent )  )
 					else
 						self:errorHandler( '"' .. dataType .. '" unknow object type'  )
 					end
