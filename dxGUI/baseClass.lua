@@ -202,31 +202,38 @@ dxGUI = {
 				return false
 			end
 
-
 			local draw = self.draw
 
 			local skipFrame = false
-			self.renderTarget = render
 			self.draw = function( self )
 				if skipFrame then
 					local pixels = dxGetTexturePixels( render )
 					dxDrawImage( self.x, self.y, self.w, self.h, render )
 					destroyElement( render )
-					self.renderTarget = nil
 
 					callback( dxCreateTexture( pixels ) )
+
+					self.draw = draw
 				else
 					local x, y = self:getPosition()
 					local show = self.show
+
 					self.show = true
-					self:setPosition( 0, 0 )
-					render:setAsTarget( true )
+					
+					render:setAsTarget( true, x, y )
+					dxSetBlendMode( 'modulate_add' )
+					
 					draw( self )
+
+					dxSetBlendMode( 'blend' )
 					dxSetRenderTarget( )
-					self:setPosition( x, y )
+
 					if show then
+						dxSetBlendMode( 'add' )
 						dxDrawImage( self.x, self.y, self.w, self.h, render )
+						dxSetBlendMode( 'blend' )
 					end
+
 					self.show = show
 					skipFrame = true
 				end

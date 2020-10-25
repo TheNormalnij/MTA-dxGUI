@@ -297,6 +297,54 @@ dxConstruction = dxGUI.baseClass:subclass{
 		end
 	end;
 
+	createTexture = function( self, callback )
+		local render = DxRenderTarget( self.w, self.h, true )
+		if not render then
+			return false
+		end
+
+
+		local draw = self.draw
+		local oldRenderTarget = self.renderTarget 
+
+		local skipFrame = false
+		self.renderTarget = render
+		self.draw = function( self )
+			if skipFrame then
+				local pixels = dxGetTexturePixels( render )
+				dxDrawImage( self.x, self.y, self.w, self.h, render )
+				destroyElement( render )
+				self.renderTarget = nil
+
+				callback( dxCreateTexture( pixels ) )
+
+				self.draw = draw
+				self.renderTarget = oldRenderTarget
+			else
+				local x, y = self:getPosition()
+				local show = self.show
+
+				self.show = true
+				
+				self:setPosition( 0, 0 )
+				render:setAsTarget( true )
+				draw( self )
+				dxSetRenderTarget( )
+				self:setPosition( x, y )
+
+				if show then
+					dxDrawImage( self.x, self.y, self.w, self.h, render )
+				end
+
+				self.show = show
+				skipFrame = true
+			end
+		end
+		
+		return true
+	end;
+	
+
 	onClick = function( self, button, state, cX, cY )
 		local gui, pos = self:getObjectInPosition( cX, cY )
 		if not gui then return; end

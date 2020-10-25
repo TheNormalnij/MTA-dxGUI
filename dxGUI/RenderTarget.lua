@@ -7,6 +7,8 @@ local _dxSetRenderTarget = dxSetRenderTarget
 
 local _dxDrawImage = dxDrawImage
 local _dxDrawText = dxDrawText
+local _dxDrawImageSection = dxDrawImageSection
+local _dxDrawRectangle = dxDrawRectangle
 
 local function setDrawingOffset( offX, offY )
 	if offX and offY then
@@ -16,10 +18,18 @@ local function setDrawingOffset( offX, offY )
 		dxDrawText = function( text, x1, y1, x2, y2, ... )
 			_dxDrawText( text, x1 - offX, y1 - offY, x2 - offX, y2 - offY, ... )
 		end
+		dxDrawImageSection = function( x, y, ... )
+			_dxDrawImageSection( x - offX, y - offY, ... )
+		end
+		dxDrawRectangle = function( x, y, ... )
+			_dxDrawRectangle( x - offX, y - offY, ... )
+		end
 		drawingOffsetsEnabled = true
 	else
 		dxDrawImage = _dxDrawImage
 		dxDrawText = _dxDrawText
+		dxDrawImageSection = _dxDrawImageSection
+		dxDrawRectangle = _dxDrawRectangle
 		drawingOffsetsEnabled = false
 	end
 end
