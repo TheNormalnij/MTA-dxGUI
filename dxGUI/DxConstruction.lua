@@ -97,7 +97,7 @@ dxConstruction = dxGUI.baseClass:subclass{
 					if parent then
 						self:errorHandler( string.format('"%s" request "%s" but it not found.', dataType, parent )  )
 					else
-						self:errorHandler( '"' .. dataType .. '" unknow object type'  )
+						self:errorHandler( string.format( '"dataType" unknow object type', dataType ) )
 					end
 					break;
 				end
