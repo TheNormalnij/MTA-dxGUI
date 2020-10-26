@@ -199,6 +199,7 @@ dxGUI = {
 		createTexture = function( self, callback )
 			local render = DxRenderTarget( self.w, self.h, true )
 			if not render then
+				callback( false )
 				return false
 			end
 
@@ -211,9 +212,9 @@ dxGUI = {
 					dxDrawImage( self.x, self.y, self.w, self.h, render )
 					destroyElement( render )
 
-					callback( dxCreateTexture( pixels ) )
-
 					self.draw = draw
+
+					callback( dxCreateTexture( pixels ) )
 				else
 					local x, y = self:getPosition()
 					local show = self.show
