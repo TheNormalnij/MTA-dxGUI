@@ -516,6 +516,14 @@ dxConstruction = dxGUI.baseClass:subclass{
 		end
 	end;
 
+	showCursor = function( self, state )
+		if state then
+			CursorManager.addGui( self )
+		else
+			CursorManager.removeGui( self )
+		end
+	end;
+
 	objectPairs = function( self )
 		return next, self.plane
 	end;

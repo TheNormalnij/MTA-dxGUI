@@ -33,4 +33,5 @@
 	<script src="dxGUI/Cursor.lua" type="client" />
 	<script src="dxGUI/RenderTarget.lua" type="client" />
 	<script src="dxGUI/Blur.lua" type="client" />
+	<script src="dxGUI/CursorManager.lua" type="client" />
 </meta>
