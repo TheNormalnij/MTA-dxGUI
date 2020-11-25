@@ -525,7 +525,12 @@ dxConstruction = dxGUI.baseClass:subclass{
 	end;
 
 	objectPairs = function( self )
-		return next, self.plane
+		return function( planeObjects, plane )
+			plane = plane - 1
+			if plane ~= 0 then
+				return plane, planeObjects[plane]
+			end			
+		end, self.plane, #self.plane + 1
 	end;
 
 }
