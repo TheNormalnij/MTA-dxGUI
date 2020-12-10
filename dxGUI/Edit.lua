@@ -13,6 +13,11 @@ dxConstruction:subclass{
 			return false
 		end
 
+		if not self.objects.text then
+			self:warning( 'Can not create edit field without text' )
+			return false
+		end
+
 		--self.construction.objects.text.input = Input{
 		self.input = Input()
 		self.input.sticked = true
