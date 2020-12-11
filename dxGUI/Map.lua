@@ -33,6 +33,7 @@ dxGUI.baseClass:subclass{
 	drawNorth = false;
 
 	borderColor = 0xFFFFFFFF;
+	maskShader = 'dxGUI/shaders/hud_mask.fx';
 
 	create = function( self )
 
@@ -104,7 +105,7 @@ dxGUI.baseClass:subclass{
 			self:addEventHandler( 'onElementDestroy', root, self.onElementDestroy )
 		end
 
-		self.shader = dxCreateShader( "dxGUI/shaders/hud_mask.fx" )
+		self.shader = dxCreateShader( self.maskShader )
 
 		self:setDrawType( self.useRenderTarget )
 
