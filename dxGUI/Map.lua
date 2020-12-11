@@ -104,7 +104,7 @@ dxGUI.baseClass:subclass{
 			self:addEventHandler( 'onElementDestroy', root, self.onElementDestroy )
 		end
 
-		self.shader = dxCreateShader( "dxGUI/shaders/hud_mask.fx" )
+		self.shader = dxCreateShader( self.maskShaderPath or  "dxGUI/shaders/hud_mask.fx" )
 
 		self:setDrawType( self.useRenderTarget )
 
@@ -206,15 +206,13 @@ dxGUI.baseClass:subclass{
 		local pX = lpPos.x
 		local pY = lpPos.y
 
-
+		local mapOffsetX = ( self.w - self.radarW ) / 2
+		local mapOffsetY = ( self.h - self.radarH ) / 2
 		local blipSizeMod = 32 / 4 * self.blipZoom
 
 		if self.drawBlips then
 			local drawCenterX, drawCenterY = self.x + self.w / 2,
 				self.y + self.h / 2
-
-			local mapOffsetX = ( self.w - self.radarW ) / 2
-			local mapOffsetY = ( self.h - self.radarH ) / 2
 
 			local bS, halfBS
 
