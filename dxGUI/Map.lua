@@ -292,14 +292,14 @@ dxGUI.baseClass:subclass{
 
 		if self.drawNorth then
 			local radarRadius = ( (self.radarW/2)^2 + (self.radarH/2)^2 )^0.5
-			dxDrawImage( mapOffsetX + self.x + math.max( 0, self.radarW / 2 + math.min( self.radarW / 2, math.cos( self.camRootRad - math.pi/2 ) * radarRadius ) ) - 12,
-				mapOffsetY + self.y + math.max( 0, self.radarH / 2 +  math.min( self.radarH / 2, math.sin( self.camRootRad - math.pi/2 ) * radarRadius ) ) - 12,
-				24, 24, self.blips[4] )
+			dxDrawImage( mapOffsetX + self.x + math.max( 0, self.radarW / 2 + math.min( self.radarW / 2, math.cos( self.camRootRad - math.pi/2 ) * radarRadius ) ) - 1.25 * blipSizeMod,
+				mapOffsetY + self.y + math.max( 0, self.radarH / 2 +  math.min( self.radarH / 2, math.sin( self.camRootRad - math.pi/2 ) * radarRadius ) ) - 1.25 * blipSizeMod,
+				2.5 * blipSizeMod, 2.5 * blipSizeMod, self.blips[4] )
 		end
 
 		if self.drawLocalPlayer then
 			local _,_, rz = getElementRotation( localPlayer )
-			dxDrawImage( self.x - 8 + self.w / 2 , self.y - 8 + self.h / 2, 16, 16, self.playerIcon, -rz + math.deg( camRootRad ), 0, 0 )
+			dxDrawImage( self.x - 1.25 * blipSizeMod + self.w / 2 , self.y - 1.25 * blipSizeMod + self.h / 2, 2.5 * blipSizeMod, 2.5 * blipSizeMod, self.playerIcon, -rz + math.deg( camRootRad ), 0, 0 )
 		end
 
 	end;
