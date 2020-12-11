@@ -206,6 +206,9 @@ dxGUI.baseClass:subclass{
 		local pX = lpPos.x
 		local pY = lpPos.y
 
+
+		local blipSizeMod = 32 / 4 * self.blipZoom
+
 		if self.drawBlips then
 			local drawCenterX, drawCenterY = self.x + self.w / 2,
 				self.y + self.h / 2
@@ -213,7 +216,6 @@ dxGUI.baseClass:subclass{
 			local mapOffsetX = ( self.w - self.radarW ) / 2
 			local mapOffsetY = ( self.h - self.radarH ) / 2
 
-			local blipSizeMod = 32 / 4 * self.blipZoom
 			local bS, halfBS
 
 			if self.mapIsCircle then
