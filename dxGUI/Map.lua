@@ -209,12 +209,13 @@ dxGUI.baseClass:subclass{
 
 		local blipSizeMod = 32 / 4 * self.blipZoom
 
-		if self.drawBlips then
-			local drawCenterX, drawCenterY = self.x + self.w / 2,
-				self.y + self.h / 2
+		local mapOffsetX = ( self.w - self.radarW ) / 2
+		local mapOffsetY = ( self.h - self.radarH ) / 2
 
-			local mapOffsetX = ( self.w - self.radarW ) / 2
-			local mapOffsetY = ( self.h - self.radarH ) / 2
+		local drawCenterX = self.x + self.w / 2
+		local drawCenterY = self.y + self.h / 2
+
+		if self.drawBlips then
 
 			local bS, halfBS
 
@@ -250,7 +251,7 @@ dxGUI.baseClass:subclass{
 								drawCenterX + radius * math.cos( blipRot - math.pi/2 ) - halfBS,
 								drawCenterY + radius * math.sin( blipRot - math.pi/2 ) - halfBS,
 								bS, bS, self.blips[iconID], 0, 0, 0, tocolor(bcR, bcG, bcB, bcA)
-							)							
+							)
 						end
 
 					end
@@ -293,10 +294,21 @@ dxGUI.baseClass:subclass{
 		end
 
 		if self.drawNorth then
-			local radarRadius = ( (self.radarW/2)^2 + (self.radarH/2)^2 )^0.5
-			dxDrawImage( mapOffsetX + self.x + math.max( 0, self.radarW / 2 + math.min( self.radarW / 2, math.cos( self.camRootRad - math.pi/2 ) * radarRadius ) ) - 1.25 * blipSizeMod,
-				mapOffsetY + self.y + math.max( 0, self.radarH / 2 +  math.min( self.radarH / 2, math.sin( self.camRootRad - math.pi/2 ) * radarRadius ) ) - 1.25 * blipSizeMod,
-				2.5 * blipSizeMod, 2.5 * blipSizeMod, self.blips[4] )
+			if self.mapIsCircle then
+				local bS = 2.5 * blipSizeMod
+				local halfBS = bS / 2
+				local blipRot = self.camRootRad
+				dxDrawImage(
+					drawCenterX + self.mapRadius * math.cos( blipRot - math.pi/2 ) - halfBS,
+					drawCenterY + self.mapRadius * math.sin( blipRot - math.pi/2 ) - halfBS,
+					bS, bS, self.blips[4], 0, 0, 0
+				)
+			else
+				local radarRadius = ( (self.radarW/2)^2 + (self.radarH/2)^2 )^0.5
+				dxDrawImage( mapOffsetX + self.x + math.max( 0, self.radarW / 2 + math.min( self.radarW / 2, math.cos( self.camRootRad - math.pi/2 ) * radarRadius ) ) - 1.25 * blipSizeMod,
+					mapOffsetY + self.y + math.max( 0, self.radarH / 2 +  math.min( self.radarH / 2, math.sin( self.camRootRad - math.pi/2 ) * radarRadius ) ) - 1.25 * blipSizeMod,
+					2.5 * blipSizeMod, 2.5 * blipSizeMod, self.blips[4] )
+			end
 		end
 
 		if self.drawLocalPlayer then
