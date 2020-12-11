@@ -460,10 +460,14 @@ dxGUI.baseClass:subclass{
 	end;
 
 	setScale = function( self, scale, scaleY )
+		scaleY = scaleY or scale
 		self.w, self.h = self.w * scale, self.h * scaleY
 		if self.mapRadius then
 			self.mapRadius = self.mapRadius * scale
 		end
+		self.blipZoom = self.blipZoom * scale
+		self.radarW = self.radarW * scale
+		self.radarH = self.radarH * scaleY
 		self.blipZoom = self.blipZoom * scale
 	end;
 }
@@ -552,20 +556,3 @@ Anim{
 		return true
 	end;
 }
-
-
---[[
-Anim{
-	name = 'map_mouseMove';
-
-	create = function( self, gui, button )
-		self.moveButton = button
-		return self
-	end;
-
-	update = function( self, gui )
-
-		return true
-	end;
-}
---]]
