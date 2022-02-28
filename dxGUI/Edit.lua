@@ -21,10 +21,12 @@ dxConstruction:subclass{
 		--self.construction.objects.text.input = Input{
 		self.input = Input()
 		self.input.sticked = true
-		self.input:bind( 'backspace', true, self.removeLeft, self, 1 )
-		self.input:bind( 'delete', true, self.removeRight, self, 1 )
-		self.input:bind( 'arrow_l', true, self.moveCarete, self, -1 )
-		self.input:bind( 'arrow_r', true, self.moveCarete, self, 1 )
+		self.input:bind( 'backspace', true, self.onUserDelete, self, -1 )
+		self.input:bind( 'delete', true, self.onUserDelete, self, 1 )
+		self.input:bind( 'arrow_l', true, self.onUserCareteMove, self, -1 )
+		self.input:bind( 'arrow_r', true, self.onUserCareteMove, self, 1 )
+		self.input:bind( 'home', true, self.moveCarete, self, -math.huge )
+		self.input:bind( 'end', true, self.moveCarete, self, math.huge )
 		self.input:bind( 'enter', true, self.input.deactivate, self.input )
 
 		self.input.onCharacter = function( input, character )
@@ -159,7 +161,7 @@ dxConstruction:subclass{
 		if self.filter then
 			s = s:gsub( self.filter, '' )
 		end
-		
+
 		if s == '' then return false; end
 		if self.isBlocked then return false; end
 
@@ -169,7 +171,7 @@ dxConstruction:subclass{
 		local stringLen	 = utfLen( s )
 		if currentLen + stringLen > self.maxLen then
 			s = utfSub( s, 0, self.maxLen - currentLen )
-			stringLen	 = utfLen( s )
+			stringLen = utfLen( s )
 		end
 		self:setText( utfSub( text, 0, self.caret ) .. s .. utfSub( text, self.caret + 1, currentLen ) )
 		self.caret = self.caret + stringLen
@@ -182,8 +184,10 @@ dxConstruction:subclass{
 		local text = self:getText()
 
 		count = self.caret - count >= 0 and count or self.caret
-		self:setText( utfSub( text, 0, self.caret - count ) .. utfSub( text, self.caret + 1, utfLen( text ) ) )
+		local deleteTo = self.caret + 1
 		self.caret = self.caret - count
+
+		self:setText( utfSub( text, 0, self.caret ) .. utfSub( text, deleteTo, utfLen( text ) ) )
 		return true
 	end;
 
@@ -230,6 +234,15 @@ dxConstruction:subclass{
 		end
 	end;
 
+	isFullWordMode = function( self )
+		return getKeyState( 'lctrl' ) or getKeyState( 'rctrl' )
+	end;
+
+	isDeleteFullLineMode = function( self )
+		return (getKeyState( 'lctrl' ) or getKeyState( 'rctrl' ))
+			and (getKeyState( 'lshift' ) or getKeyState( 'rshift' ))
+	end;
+
 	onCursorMove = function( self, inStatus )
 		if self.isBlocked then
 
@@ -243,6 +256,59 @@ dxConstruction:subclass{
 			else
 				self:setStatus( 'default' )
 			end
+		end
+	end;
+
+	getUserMoveCount = function( self, pos )
+		if self:isFullWordMode() then
+			local text = self:getText()
+			local spacePatterg
+			local wordPattern
+
+			if pos > 0 then
+				spacePatterg = '^%s+(.-)$'
+				wordPattern = '^%w+(.-)$'
+				text = utf8.sub( text, self.caret + 1 )
+			else
+				spacePatterg = '^(.-)%s+$'
+				wordPattern = '^(.-)%w+$'
+				text = utf8.sub( text, 0, self.caret )
+			end
+
+			local len = utf8.len(text)
+
+			-- Remove spaces only
+			local newStr = utf8.match( text, spacePatterg )
+			if newStr then
+				return (len - utf8.len( newStr )) * pos
+			end
+
+			-- Remove whole word
+			local newStr = utf8.match( text, wordPattern )
+			if newStr then
+				return (len - utf8.len( newStr )) * pos
+			end
+		end
+
+		return pos
+	end;
+
+	onUserCareteMove = function( self, pos )
+		self:moveCarete( self:getUserMoveCount( pos ) )
+	end;
+
+	onUserDelete = function( self, pos )
+		local count
+		if self:isDeleteFullLineMode() then
+			count = math.huge * pos
+		else
+			count = self:getUserMoveCount( pos )
+		end
+
+		if count > 0 then
+			self:removeRight( count )
+		else
+			self:removeLeft( -count )
 		end
 	end;
 
